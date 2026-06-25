@@ -1,30 +1,26 @@
 "use client";
 
-import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
-  const { setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
 
-  // resolvedTheme is only known on the client; gate the icon to avoid a
-  // hydration mismatch (next-themes recommendation).
-  React.useEffect(() => setMounted(true), []);
-
-  const isDark = resolvedTheme === "dark";
-
+  // Icons are driven purely by the `.dark` class (set by next-themes before
+  // paint) — both render in SSR HTML, CSS hides one. No mounted effect, so no
+  // hydration mismatch and no cascading setState.
   return (
     <Button
       variant="ghost"
       size="icon-sm"
       aria-label="Toggle theme"
       title="Toggle theme"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {mounted && !isDark ? <Moon /> : <Sun />}
+      <Sun className="hidden dark:block" />
+      <Moon className="block dark:hidden" />
       <span className="sr-only">Toggle theme</span>
     </Button>
   );
