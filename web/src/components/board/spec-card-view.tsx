@@ -1,10 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { Badge } from "@/components/ui/badge";
-import { RunningBadge } from "@/components/status/running-badge";
-import { OpenFullLink } from "@/components/detail/open-full-link";
+import { RunningBadge } from "@/components/board/running-badge";
+import { OpenFullLink } from "@/components/board/detail/open-full-link";
+import { useBoardSheet } from "@/components/board/spec-sheet";
 import { checkProgress } from "@/lib/check-progress";
 import { cn } from "@/lib/utils";
 import type { SpecCard } from "@/mock/types";
@@ -13,9 +12,9 @@ import type { SpecCard } from "@/mock/types";
 // agent-running badges. Progress comes from checkProgress, so an unevidenced
 // pass never counts toward green (SC-004).
 //
-// When `interactive`, the card opens its detail (US4): a plain click soft-navs
-// to /board/[spec] (the drawer, via interception); ⌘/Ctrl-click opens the full
-// page in a new tab; the hover "Open full" affordance jumps straight there.
+// When `interactive`, the card opens its detail (US4): a plain click opens the
+// in-page Sheet (BoardSheetProvider); ⌘/Ctrl-click opens the full page in a new
+// tab; the hover "Open full" affordance jumps straight there.
 export function SpecCardView({
   card,
   className,
@@ -25,14 +24,14 @@ export function SpecCardView({
   className?: string;
   interactive?: boolean;
 }) {
-  const router = useRouter();
+  const { openSpec } = useBoardSheet();
   const { passed, total } = checkProgress(card.checks);
 
   function handleClick(e: React.MouseEvent) {
     if (e.metaKey || e.ctrlKey) {
       window.open(`/board/${card.id}`, "_blank", "noopener,noreferrer");
     } else {
-      router.push(`/board/${card.id}`);
+      openSpec(card.id);
     }
   }
 

@@ -1,5 +1,5 @@
-import { CheckBadge } from "@/components/status/check-badge";
-import { EvidenceChip } from "@/components/status/evidence-chip";
+import { CheckBadge } from "@/components/board/detail/check-badge";
+import { EvidenceChip } from "@/components/board/detail/evidence-chip";
 import { checkProgress } from "@/lib/check-progress";
 import type { Check, CheckKind } from "@/mock/types";
 

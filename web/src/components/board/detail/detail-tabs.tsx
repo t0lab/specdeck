@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SpecView } from "@/components/spec/spec-view";
-import { ChecksPanel } from "@/components/checks/checks-panel";
-import { DiffView } from "@/components/diff/diff-view";
+import { SpecView } from "@/components/board/detail/spec-view";
+import { ChecksPanel } from "@/components/board/detail/checks-panel";
+import { DiffView } from "@/components/board/detail/diff-view";
 import type { DetailTab } from "@/lib/default-tab";
 import type { SpecCard } from "@/mock/types";
 

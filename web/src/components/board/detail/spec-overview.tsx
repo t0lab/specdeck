@@ -1,16 +1,17 @@
 import { Streamdown } from "streamdown";
 
-import { ColumnTag } from "@/components/status/column-tag";
-import { RunningBadge } from "@/components/status/running-badge";
+import { ColumnTag } from "@/components/board/column-tag";
+import { RunningBadge } from "@/components/board/running-badge";
 import { Badge } from "@/components/ui/badge";
-import { ChecksPanel } from "@/components/checks/checks-panel";
-import { OpenFullLink } from "@/components/detail/open-full-link";
+import { ChecksPanel } from "@/components/board/detail/checks-panel";
+import { OpenFullLink } from "@/components/board/detail/open-full-link";
 import type { SpecCard } from "@/mock/types";
 
-// Condensed overview shown in the drawer (US4). Header (code/column/badges),
-// goal, and the Checks + Evidence summary — enough to triage without leaving
-// the board. "Open full" jumps to the dedicated detail page.
-export function DrawerOverview({ spec }: { spec: SpecCard }) {
+// Condensed Spec overview shown in the in-page Sheet (US4). Header
+// (code/column/badges), goal, and the Checks + Evidence summary — enough to
+// triage without leaving the board. "Open full" jumps to the dedicated detail
+// page.
+export function SpecOverview({ spec }: { spec: SpecCard }) {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-3">

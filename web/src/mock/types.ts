@@ -4,8 +4,8 @@
 // reused for real Specs later. See data-model.md.
 //
 // Reuse the unions already owned by the status components — do NOT redefine.
-import type { BoardColumn } from "@/components/status/column-tag";
-import type { CheckState } from "@/components/status/check-badge";
+import type { BoardColumn } from "@/components/board/column-tag";
+import type { CheckState } from "@/components/board/detail/check-badge";
 
 export type { BoardColumn, CheckState };
 

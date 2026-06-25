@@ -2,10 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { ColumnTag } from "@/components/status/column-tag";
-import { RunningBadge } from "@/components/status/running-badge";
+import { ColumnTag } from "@/components/board/column-tag";
+import { RunningBadge } from "@/components/board/running-badge";
 import { Badge } from "@/components/ui/badge";
-import { DetailTabs } from "@/components/detail/detail-tabs";
+import { DetailTabs } from "@/components/board/detail/detail-tabs";
 import { defaultTab } from "@/lib/default-tab";
 import { getSpec, SPECS } from "@/mock/specs";
 

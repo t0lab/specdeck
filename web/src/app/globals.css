@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* base-ui transition variants — base-ui sets [data-starting-style] on enter and
+   [data-ending-style] on exit. Without registering these, the Sheet/Dialog
+   enter/exit classes (opacity + translate) compile to nothing, so overlays just
+   pop in with no animation. */
+@custom-variant data-starting-style (&[data-starting-style]);
+@custom-variant data-ending-style (&[data-ending-style]);
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -133,6 +140,7 @@
   --warn: #b47914;
   --crit: #d2483e;
   --running: #0a8470;
+  --shipped: #2f6fd0; /* Done column — blue, distinct from Review mint (AA on white) */
 
   /* SpecDeck — elevation */
   --shadow-card: 0 1px 2px rgb(20 20 24 / 0.06);
@@ -141,7 +149,7 @@
   --col-backlog: var(--text-mute);
   --col-plan: var(--warn);
   --col-review: var(--running);
-  --col-done: var(--good);
+  --col-done: var(--shipped); /* blue — was --good; Done must read apart from Review mint */
   --check-pass: var(--good);
   --check-fail: var(--crit);
   --check-pending: var(--warn);
@@ -203,6 +211,7 @@
   --warn: #f2c45a;
   --crit: #ff6b6b;
   --running: #38e8c6;
+  --shipped: #5b9bf0; /* Done column — blue, distinct from Review mint */
 
   /* SpecDeck — elevation */
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.25);
