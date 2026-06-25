@@ -1,178 +1,154 @@
+import Link from "next/link";
+import { ArrowRight, ClipboardList, Hammer, ShieldCheck } from "lucide-react";
+
 import { Logo } from "@/components/brand/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Badge } from "@/components/ui/badge";
-import {
-  CheckBadge,
-  type CheckState,
-} from "@/components/status/check-badge";
-import {
-  ColumnTag,
-  type BoardColumn,
-} from "@/components/status/column-tag";
-import { EvidenceChip } from "@/components/status/evidence-chip";
+import { ColumnTag, type BoardColumn } from "@/components/status/column-tag";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-// Mock content only — illustrates the design system on the surfaces it will skin.
-// The real board + data layer is a later feature (see spec Assumptions).
-type Check = {
-  label: string;
-  state: CheckState;
-  evidence?: string;
-  missingEvidence?: boolean;
-};
-type SpecCard = {
-  id: string;
-  title: string;
-  checks: Check[];
-  fastlane?: boolean;
-};
-type Column = { column: BoardColumn; cards: SpecCard[] };
+// Landing (US1). Explains the product — "review specs, not diffs" — the four
+// board columns, and the Planner → Builder → Checker pipeline, then sends the
+// visitor to /board. Static server component; only ThemeToggle is client.
 
-const BOARD: Column[] = [
+const COLUMNS: { column: BoardColumn; blurb: string }[] = [
+  { column: "backlog", blurb: "Specs waiting to be planned." },
+  { column: "plan", blurb: "An agent is drafting the spec — review what's about to be built." },
+  { column: "review", blurb: "An agent has finished — approve at the Check + Evidence layer." },
+  { column: "done", blurb: "Shipped and frozen. The spec is the contract." },
+];
+
+const PIPELINE = [
   {
-    column: "backlog",
-    cards: [
-      { id: "SPEC-021", title: "Export board as weekly digest", checks: [] },
-      { id: "SPEC-022", title: "Keyboard-only navigation", checks: [] },
-    ],
+    role: "Planner",
+    Icon: ClipboardList,
+    blurb: "Turns intent into a Spec — Goal, Acceptance, and Checks.",
   },
   {
-    column: "plan",
-    cards: [
-      {
-        id: "SPEC-018",
-        title: "Magic-link login",
-        fastlane: true,
-        checks: [
-          { label: "Acceptance soạn xong", state: "pass", evidence: "#" },
-          { label: "Rate-limit policy", state: "pending" },
-        ],
-      },
-    ],
+    role: "Builder",
+    Icon: Hammer,
+    blurb: "Executes one Spec in isolation. One agent per unit of work.",
   },
   {
-    column: "review",
-    cards: [
-      {
-        id: "SPEC-014",
-        title: "Realtime SSE xuống board",
-        checks: [
-          { label: "Build + typecheck", state: "pass", evidence: "#" },
-          { label: "E2E reconnect flow", state: "running" },
-          { label: "Load test 1k clients", state: "pass", missingEvidence: true },
-        ],
-      },
-      {
-        id: "SPEC-016",
-        title: "Checker chạy độc lập model",
-        checks: [
-          { label: "Held-out checks", state: "fail", evidence: "#" },
-          { label: "Prompt-injection guard", state: "pending" },
-        ],
-      },
-    ],
-  },
-  {
-    column: "done",
-    cards: [
-      {
-        id: "SPEC-009",
-        title: "Spec contract schema",
-        checks: [
-          { label: "Unit + contract tests", state: "pass", evidence: "#" },
-          { label: "Migration applied", state: "pass", evidence: "#" },
-        ],
-      },
-    ],
+    role: "Checker",
+    Icon: ShieldCheck,
+    blurb: "An independent model verifies the Evidence. Never self-grades.",
   },
 ];
 
-function CheckRow({ check }: { check: Check }) {
-  // Principle I: a pass-worthy Check missing Evidence must not read as pass.
-  const showMissing = check.state === "pass" && check.missingEvidence;
-  return (
-    <li className="flex items-center justify-between gap-3 py-1">
-      <CheckBadge
-        state={showMissing ? "pending" : check.state}
-        className="min-w-0"
-      />
-      <span className="min-w-0 flex-1 truncate text-xs text-dim">
-        {check.label}
-      </span>
-      {showMissing ? (
-        <EvidenceChip missing />
-      ) : (
-        check.state === "pass" &&
-        check.evidence && <EvidenceChip href={check.evidence} label="view" />
-      )}
-    </li>
-  );
-}
-
-function Card({ card }: { card: SpecCard }) {
-  return (
-    <article className="rounded-md border border-border bg-surface p-3 shadow-(--shadow-card) transition-colors hover:border-strong">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="font-mono text-xs text-mute tabular-nums">
-          {card.id}
-        </span>
-        {card.checks.length > 0 && (
-          <span className="font-mono text-xs text-mute tabular-nums">
-            {card.checks.filter((c) => c.state === "pass" && !c.missingEvidence)
-              .length}
-            /{card.checks.length}
-          </span>
-        )}
-      </div>
-      <h3 className="mt-1 text-sm font-medium leading-snug tracking-tight">
-        {card.title}
-      </h3>
-      {card.fastlane && (
-        <Badge variant="outline" className="mt-2 border-fastlane/40 text-fastlane">
-          Fast lane
-        </Badge>
-      )}
-      {card.checks.length > 0 && (
-        <ul className="mt-2 border-t border-border/60 pt-1.5">
-          {card.checks.map((check) => (
-            <CheckRow key={check.label} check={check} />
-          ))}
-        </ul>
-      )}
-    </article>
-  );
-}
-
 export default function Home() {
   return (
-    <div className="min-h-full bg-ground">
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 px-6 py-3 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <Logo />
-          <div className="flex items-center gap-3">
-            <span className="hidden font-mono text-xs text-mute sm:inline">
-              review specs, not diffs
-            </span>
-            <ThemeToggle />
-          </div>
-        </div>
+    <div className="flex min-h-full flex-col bg-ground">
+      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-5">
+        <Logo />
+        <ThemeToggle />
       </header>
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {BOARD.map(({ column, cards }) => (
-            <section key={column} className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <ColumnTag column={column} count={cards.length} />
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-24 px-6 pb-24 pt-12">
+        {/* Hero */}
+        <section className="flex flex-col items-start gap-6">
+          <span className="font-mono text-xs uppercase tracking-[0.2em] text-mute">
+            Async coding agents, on one deck
+          </span>
+          <h1 className="max-w-3xl text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+            Review <span className="text-primary">specs</span>,
+            <br />
+            not{" "}
+            <span className="text-mute line-through decoration-mute/40">
+              diffs
+            </span>
+            .
+          </h1>
+          <p className="max-w-2xl text-lg leading-relaxed text-dim">
+            SpecDeck is a control deck for orchestrating async coding agents.
+            You approve work at the spec and checklist layer — read the Goal,
+            the Checks, and their Evidence. You never have to read a diff.
+          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <Link
+              href="/board"
+              className={cn(
+                buttonVariants({ size: "lg" }),
+                "h-11 gap-2 px-6 text-sm",
+              )}
+            >
+              Open the board
+              <ArrowRight className="size-4" />
+            </Link>
+            <Link
+              href="#how-it-works"
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "lg" }),
+                "h-11 px-4 text-sm text-dim",
+              )}
+            >
+              How it works
+            </Link>
+          </div>
+        </section>
+
+        {/* Four columns */}
+        <section id="how-it-works" className="flex scroll-mt-20 flex-col gap-6">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Four columns, left to right
+            </h2>
+            <p className="text-dim">
+              Each card is one Spec. Work flows across the deck as agents pick
+              it up.
+            </p>
+          </div>
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {COLUMNS.map(({ column, blurb }) => (
+              <li
+                key={column}
+                className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card)"
+              >
+                <ColumnTag column={column} />
+                <p className="text-sm leading-relaxed text-dim">{blurb}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Pipeline */}
+        <section className="flex flex-col gap-6">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Planner → Builder → Checker
+            </h2>
+            <p className="text-dim">
+              A pipeline of specialized agents. Verification is independent and
+              evidence-gated.
+            </p>
+          </div>
+          <div className="flex flex-col items-stretch gap-4 md:flex-row md:items-center">
+            {PIPELINE.map(({ role, Icon, blurb }, i) => (
+              <div key={role} className="flex flex-1 items-center gap-4">
+                <div className="flex flex-1 flex-col gap-3 rounded-xl border border-border bg-surface p-5 shadow-(--shadow-card)">
+                  <div className="flex items-center gap-2.5">
+                    <span className="grid size-8 place-items-center rounded-lg bg-accent-soft text-primary">
+                      <Icon className="size-4" />
+                    </span>
+                    <span className="font-medium tracking-tight">{role}</span>
+                  </div>
+                  <p className="text-sm leading-relaxed text-dim">{blurb}</p>
+                </div>
+                {i < PIPELINE.length - 1 && (
+                  <ArrowRight
+                    className="hidden size-5 shrink-0 text-mute md:block"
+                    aria-hidden
+                  />
+                )}
               </div>
-              <div className="flex flex-col gap-3">
-                {cards.map((card) => (
-                  <Card key={card.id} card={card} />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+            ))}
+          </div>
+        </section>
       </main>
+
+      <footer className="mx-auto w-full max-w-5xl px-6 py-8">
+        <p className="text-sm text-mute">SpecDeck — review specs, not diffs.</p>
+      </footer>
     </div>
   );
 }
