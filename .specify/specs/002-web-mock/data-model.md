@@ -4,8 +4,8 @@ Mock-only: đây là hình dạng **dữ liệu tĩnh trong `web/src/mock/`**, k
 
 ## Enums / unions (đồng bộ component đã có)
 
-- `BoardColumn = "backlog" | "plan" | "review" | "done"` — đã định nghĩa ở `components/status/column-tag.tsx` (tái dùng, **không** định nghĩa lại).
-- `CheckState = "pass" | "fail" | "pending" | "running"` — đã định nghĩa ở `components/status/check-badge.tsx` (tái dùng).
+- `BoardColumn = "backlog" | "plan" | "review" | "done"` — đã định nghĩa ở `components/board/column-tag.tsx` (tái dùng, **không** định nghĩa lại).
+- `CheckState = "pass" | "fail" | "pending" | "running"` — đã định nghĩa ở `components/board/detail/check-badge.tsx` (tái dùng).
 - `Priority = "P1" | "P2" | "P3"`
 - `CheckKind = "deterministic" | "evidence" | "held-out" | "judge"` — thứ tự verify (FR-023).
 - `EvidenceType = "test" | "log" | "image" | "video" | "html"`
