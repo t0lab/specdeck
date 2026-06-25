@@ -17,6 +17,7 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { BoardColumnLane } from "@/components/board/board-column-lane";
 import { SpecCardView } from "@/components/board/spec-card-view";
 import { moveCard, reorderCard, type BoardState } from "@/lib/board-state";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import type { BoardColumn, SpecCard } from "@/mock/types";
 
 const COLUMNS: BoardColumn[] = ["backlog", "plan", "review", "done"];
@@ -58,6 +59,7 @@ function findCard(state: BoardState, cardId: string): SpecCard | undefined {
 export function BoardDnd({ initialLanes }: { initialLanes: BoardState }) {
   const [state, dispatch] = useReducer(reducer, initialLanes);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const reducedMotion = useReducedMotion();
 
   const sensors = useSensors(
     // Distance constraint: a stationary press is a click (US4 open), not a drag.
@@ -128,7 +130,7 @@ export function BoardDnd({ initialLanes }: { initialLanes: BoardState }) {
       </div>
       {/* Overlay: a lifted clone of the card follows the pointer/keyboard
           focus while dragging — distinct from the dimmed origin placeholder. */}
-      <DragOverlay>
+      <DragOverlay dropAnimation={reducedMotion ? null : undefined}>
         {activeCard ? (
           <SpecCardView
             card={activeCard}
