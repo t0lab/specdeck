@@ -8,7 +8,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -39,6 +39,37 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* SpecDeck — surfaces & text (FR-002) */
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-strong: var(--border-strong); /* utility: border-strong */
+  --color-dim: var(--text-dim); /* utility: text-dim */
+  --color-mute: var(--text-mute); /* utility: text-mute */
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+
+  /* SpecDeck — semantic state, separate from accent (FR-002) */
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-crit: var(--crit);
+  --color-running: var(--running);
+
+  /* SpecDeck — board columns (FR-004) */
+  --color-col-backlog: var(--col-backlog);
+  --color-col-plan: var(--col-plan);
+  --color-col-review: var(--col-review);
+  --color-col-done: var(--col-done);
+
+  /* SpecDeck — Check / Evidence (FR-004) */
+  --color-check-pass: var(--check-pass);
+  --color-check-fail: var(--check-fail);
+  --color-check-pending: var(--check-pending);
+  --color-check-running: var(--check-running);
+  --color-evidence: var(--evidence);
+  --color-fastlane: var(--fastlane);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -48,73 +79,133 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ── Light (default :root — applies when no .dark on <html>) ──────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #ffffff;
+  --foreground: #14171c;
+  --card: #ffffff;
+  --card-foreground: #14171c;
+  --popover: #ffffff;
+  --popover-foreground: #14171c;
+  --primary: #0fa188;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f3f5;
+  --secondary-foreground: #14171c;
+  --muted: #f1f3f5;
+  --muted-foreground: #586170;
+  --accent: #f1f3f5; /* shadcn interaction/hover surface — NOT brand mint */
+  --accent-foreground: #14171c;
+  --destructive: #d2483e;
+  --border: #e2e6eb;
+  --input: #e2e6eb;
+  --ring: #0fa188;
+  --chart-1: #0fa188;
+  --chart-2: #1f9d5b;
+  --chart-3: #b47914;
+  --chart-4: #586170;
+  --chart-5: #d2483e;
+  --radius: 0.4rem;
+  --sidebar: #f6f7f9;
+  --sidebar-foreground: #14171c;
+  --sidebar-primary: #0fa188;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f3f5;
+  --sidebar-accent-foreground: #14171c;
+  --sidebar-border: #e2e6eb;
+  --sidebar-ring: #0fa188;
+
+  /* SpecDeck — surfaces */
+  --ground: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f9fafb;
+  --border-strong: #cdd3da;
+
+  /* SpecDeck — text levels */
+  --text-dim: #586170;
+  --text-mute: #8a929e;
+
+  /* SpecDeck — accent (mint, light variant for AA on white) */
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(15, 161, 136, 0.12);
+
+  /* SpecDeck — semantic state */
+  --good: #1f9d5b;
+  --warn: #b47914;
+  --crit: #d2483e;
+  --running: #0fa188;
+
+  /* SpecDeck — elevation */
+  --shadow-card: 0 1px 2px rgb(20 20 24 / 0.06);
+
+  /* SpecDeck — semantic→raw mapping (lazy var() resolves per active mode) */
+  --col-backlog: var(--text-mute);
+  --col-plan: var(--warn);
+  --col-review: var(--running);
+  --col-done: var(--good);
+  --check-pass: var(--good);
+  --check-fail: var(--crit);
+  --check-pending: var(--warn);
+  --check-running: var(--running);
+  --evidence: var(--primary);
+  --fastlane: var(--primary);
 }
 
+/* ── Dark (default identity — next-themes sets <html class="dark">) ───────── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0e1116;
+  --foreground: #e6e8eb;
+  --card: #14171c;
+  --card-foreground: #e6e8eb;
+  --popover: #14171c;
+  --popover-foreground: #e6e8eb;
+  --primary: #38e8c6;
+  --primary-foreground: #04130f;
+  --secondary: #181c22;
+  --secondary-foreground: #e6e8eb;
+  --muted: #181c22;
+  --muted-foreground: #99a1ac;
+  --accent: #181c22; /* shadcn interaction/hover surface — NOT brand mint */
+  --accent-foreground: #e6e8eb;
+  --destructive: #ff6b6b;
+  --border: #242a33;
+  --input: #242a33;
+  --ring: #38e8c6;
+  --chart-1: #38e8c6;
+  --chart-2: #57dd8b;
+  --chart-3: #f2c45a;
+  --chart-4: #99a1ac;
+  --chart-5: #ff6b6b;
+  --sidebar: #0b0d10;
+  --sidebar-foreground: #e6e8eb;
+  --sidebar-primary: #38e8c6;
+  --sidebar-primary-foreground: #04130f;
+  --sidebar-accent: #181c22;
+  --sidebar-accent-foreground: #e6e8eb;
+  --sidebar-border: #242a33;
+  --sidebar-ring: #38e8c6;
+
+  /* SpecDeck — surfaces */
+  --ground: #0b0d10;
+  --surface: #14171c;
+  --surface-2: #181c22;
+  --border-strong: #2e353f;
+
+  /* SpecDeck — text levels */
+  --text-dim: #99a1ac;
+  --text-mute: #5e6671;
+
+  /* SpecDeck — accent (electric mint) */
+  --accent-ink: #04130f;
+  --accent-soft: rgba(56, 232, 198, 0.12);
+
+  /* SpecDeck — semantic state */
+  --good: #57dd8b;
+  --warn: #f2c45a;
+  --crit: #ff6b6b;
+  --running: #38e8c6;
+
+  /* SpecDeck — elevation */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.25);
 }
 
 @layer base {
@@ -126,5 +217,25 @@
   }
   html {
     @apply font-sans;
+  }
+  /* mono surfaces (Spec ID / Check / Evidence / numbers) align figures */
+  code,
+  kbd,
+  samp,
+  pre {
+    @apply font-mono;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Reduced motion — kill non-essential animation (FR-010 / C5) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
