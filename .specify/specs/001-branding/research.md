@@ -35,6 +35,8 @@ Giải quyết các điểm mở của spec/plan. Mỗi mục: **Decision · Rat
 
 **Cần làm ở implement**: tải `IBMPlexMono-Regular/Medium` (cùng nguồn Google Fonts mirror OFL) vào `web/src/fonts/`; xác minh dấu tiếng Việt render đủ.
 
+> **Triển khai thực tế (T003)**: fontTools 4.62 lỗi subset biến-thiên (`gvar` KeyError) trên file variable → đổi sang **instance tĩnh 400/500/600** cho Sans (đúng các weight đang dùng) + Mono 400/500, mỗi file subset latin+latin-ext+vi, ~73–112 KB. Self-host qua `next/font/local` (5 file `.ttf` dưới `/_next/static/media`, 0 CDN). Variable axis bỏ qua vì chỉ dùng 3 weight — không ảnh hưởng UI.
+
 > **Docs verified 2026-06-25** (T001): khớp Next 16.2.9 — `next/font/local` nhận `src` (string|array `{path,weight,style}`), `variable` cho CSS var, variable font dùng `weight: "100 700"`; Tailwind v4 map qua `@theme inline { --font-sans: var(--font-…) }`; icon file-convention `favicon.ico`/`icon.svg`/`apple-icon.png` trong `app/` (apple-icon là `.png` route, auto `<link rel="apple-touch-icon">`). Không lệch research.
 
 ## R4. Map token vào shadcn slots
