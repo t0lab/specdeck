@@ -22,7 +22,7 @@ Wordmark hai màu: **Spec** (màu chữ) + **Deck** (mint). Chữ đã **outline
 | `specdeck-vertical.svg` | Lockup dọc on-dark. |
 | `specdeck-vertical-light.svg` | Lockup dọc on-light. |
 | `specdeck-wordmark.svg` | Wordmark on-dark (Spec `#E6E8EB` + Deck `#38E8C6`). |
-| `specdeck-wordmark-light.svg` | Wordmark on-light (Spec `#1A1A18` + Deck `#0FA188`). |
+| `specdeck-wordmark-light.svg` | Wordmark on-light (Spec `#1A1A18` + Deck `#0A8470`). |
 | `specdeck-wordmark-mono.svg` | Wordmark 1 màu — kế thừa `currentColor`. |
 | `specdeck-app-icon.svg` | App/launcher icon — mark trong tile bo góc. |
 | `favicon.svg` | Favicon SVG (= thiết kế app-icon). |
@@ -33,7 +33,7 @@ Wordmark hai màu: **Spec** (màu chữ) + **Deck** (mint). Chữ đã **outline
 | Token | Hex | Ghi chú |
 |-------|-----|---------|
 | Accent (mint) | `#38E8C6` | Trên nền tối |
-| Accent (light bg) | `#0FA188` | Biến thể đậm cho nền sáng (AA) |
+| Accent (light bg) | `#0A8470` | Biến thể đậm cho nền sáng (AA) |
 | Line on dark | `#E6E8EB` | Cột / chữ "Spec" trên nền tối |
 | Line on light | `#1A1A18` | Cột / chữ "Spec" trên nền sáng |
 | Ground | `#0B0D10` | Nền control-room |
@@ -55,7 +55,7 @@ Wordmark hai màu: **Spec** (màu chữ) + **Deck** (mint). Chữ đã **outline
 - Không đổi màu/hue accent · không tô nhiều hơn một cột accent.
 - Không kéo méo, xoay, nghiêng, đổ bóng/glow lên mark.
 - Không đổi nhịp/độ cao cột (đó là nhận diện).
-- Không đặt mint sáng `#38E8C6` lên nền trắng (rớt AA) — dùng `#0FA188`.
+- Không đặt mint sáng `#38E8C6` lên nền trắng (rớt AA) — dùng `#0A8470`.
 
 ## Regenerate
 

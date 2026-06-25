@@ -24,7 +24,7 @@ Biến skeleton (look shadcn mặc định) thành bản sắc **Control room**:
 
 **Performance Goals**: Không FOUC khi load (theme set server-side); font self-host (0 request CDN), `display: swap`, subset latin + latin-ext (dấu tiếng Việt).
 
-**Constraints**: WCAG AA cho text + control ở dark *và* light; tôn trọng `prefers-reduced-motion`; focus nhìn thấy được; mint sáng `#38E8C6` KHÔNG dùng làm mực trên nền trắng (dùng `#0FA188`).
+**Constraints**: WCAG AA cho text + control ở dark *và* light; tôn trọng `prefers-reduced-motion`; focus nhìn thấy được; mint sáng `#38E8C6` KHÔNG dùng làm mực trên nền trắng (dùng `#0A8470`).
 
 **Scale/Scope**: 1 hệ token (dark+light), 2 họ chữ, re-skin 1 shell (layout + 1 trang). CHƯA build board dữ liệu thật.
 
@@ -88,7 +88,7 @@ Mỗi đơn vị có done-condition quan sát được; thứ tự có phụ thu
 
 1. **Fonts**: thêm Plex Sans/Mono vào `web/src/fonts/` + OFL.txt; `layout.tsx` dùng `next/font/local`, set `--font-sans`/`--font-mono`; gỡ Geist. *Done*: trang render bằng Plex; DevTools Network 0 request tới host font ngoài.
 2. **Tokens (dark)**: viết palette control-room dark trong `globals.css` (`:root`/`@theme`) theo data-model.md (nền/text/accent/semantic/board/check/radius/elevation). *Done*: `--color-*` resolve đúng; không hardcode hex trong component.
-3. **Tokens (light)** + biến thể mint AA: bộ `.dark` ↔ light đảo đúng; mint nền sáng = `#0FA188`. *Done*: contrast script báo AA pass cả 2 mode.
+3. **Tokens (light)** + biến thể mint AA: bộ `.dark` ↔ light đảo đúng; mint nền sáng = `#0A8470`. *Done*: contrast script báo AA pass cả 2 mode.
 4. **Theme (next-themes)**: `pnpm add next-themes`; `theme-provider.tsx` (bọc `ThemeProvider`, `defaultTheme="dark"` `enableSystem` `disableTransitionOnChange`) + `theme-toggle.tsx` (`useTheme`); layout bọc provider + `<html suppressHydrationWarning>`. *Done*: đổi mode 1 thao tác, không reload, reload vẫn giữ, không nhấp nháy (anti-FOUC do lib).
 5. **Brand components**: `<Logo>`/`<Wordmark>` (mark Columns, accent token). *Done*: hiện ở app bar; favicon đã auto.
 6. **Re-skin shell**: `page.tsx` (+ app bar) sang control-room; trạng thái demo mã hoá màu+hình; focus-visible; `prefers-reduced-motion`. *Done*: không còn look shadcn mặc định; grayscale vẫn phân biệt trạng thái.

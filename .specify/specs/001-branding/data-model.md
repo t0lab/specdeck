@@ -21,17 +21,17 @@
 |-------|------|-------|---------|
 | `--foreground` / text | `#E6E8EB` | `#14171C` | chữ chính |
 | `--text-dim` / `--muted-foreground` | `#99A1AC` | `#586170` | phụ |
-| `--text-mute` | `#5E6671` | `#8A929E` | mờ nhất (ID, caption) |
+| `--text-mute` | `#7A828D` | `#6B7480` | mờ nhất (ID, caption) |
 
 ## 3. Accent (mint)
 
 | Token | Dark | Light | Vai trò |
 |-------|------|-------|---------|
-| `--accent` (brand) / `--primary` | `#38E8C6` | `#0FA188` | nhấn, primary, link/Evidence |
+| `--accent` (brand) / `--primary` | `#38E8C6` | `#0A8470` | nhấn, primary, link/Evidence |
 | `--accent-ink` / `--primary-foreground` | `#04130F` | `#FFFFFF` | mực trên nền accent |
 | `--accent-soft` | `rgba(56,232,198,.12)` | `rgba(15,161,136,.12)` | nền nhạt của accent |
 
-> `#38E8C6` KHÔNG dùng làm mực trên nền sáng (rớt AA) — light dùng `#0FA188`.
+> `#38E8C6` KHÔNG dùng làm mực trên nền sáng (rớt AA) — light dùng `#0A8470`.
 
 ## 4. Semantic state (TÁCH khỏi accent)
 
@@ -40,7 +40,7 @@
 | `--good` | `#57DD8B` | `#1F9D5B` | pass / Done |
 | `--warn` | `#F2C45A` | `#B47914` | pending / Plan |
 | `--crit` / `--destructive` | `#FF6B6B` | `#D2483E` | fail |
-| `--running` | `#38E8C6` | `#0FA188` | in-flight (= accent) |
+| `--running` | `#38E8C6` | `#0A8470` | in-flight (= accent) |
 
 ## 5. Board columns (FR-004)
 

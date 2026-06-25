@@ -56,7 +56,7 @@ Mọi trạng thái PHẢI thể hiện bằng **màu + hình + nhãn**, không 
 - Dark **và** light đạt **WCAG AA** (text ≥ 4.5:1, UI/large ≥ 3:1) — SC-004.
 - `:focus-visible` có ring nhìn thấy (`--ring`).
 - Tôn trọng `prefers-reduced-motion` (tắt pulse/animation).
-- `#38E8C6` không làm mực trên nền sáng (dùng `#0FA188`).
+- `#38E8C6` không làm mực trên nền sáng (dùng `#0A8470`).
 
 ## C6. Brand asset contract
 

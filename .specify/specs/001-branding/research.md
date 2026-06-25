@@ -35,6 +35,8 @@ Giải quyết các điểm mở của spec/plan. Mỗi mục: **Decision · Rat
 
 **Cần làm ở implement**: tải `IBMPlexMono-Regular/Medium` (cùng nguồn Google Fonts mirror OFL) vào `web/src/fonts/`; xác minh dấu tiếng Việt render đủ.
 
+> **Docs verified 2026-06-25** (T001): khớp Next 16.2.9 — `next/font/local` nhận `src` (string|array `{path,weight,style}`), `variable` cho CSS var, variable font dùng `weight: "100 700"`; Tailwind v4 map qua `@theme inline { --font-sans: var(--font-…) }`; icon file-convention `favicon.ico`/`icon.svg`/`apple-icon.png` trong `app/` (apple-icon là `.png` route, auto `<link rel="apple-touch-icon">`). Không lệch research.
+
 ## R4. Map token vào shadcn slots
 
 **Decision**: Đặt lại **đúng các biến shadcn** (`--background --foreground --card --popover --primary --secondary --muted --accent --destructive --border --input --ring …`) bằng giá trị control-room → component shadcn mới **kế thừa brand tự động** (SC-006). **Mở rộng** thêm token riêng SpecDeck (không có trong shadcn): `--surface-2`, `--text-dim`, `--text-mute`, `--accent-ink`, semantic `--good/--warn/--crit/--running`, board `--col-backlog/plan/review/done`, check `--check-pass/fail/pending/running`, `--evidence`, `--fastlane`. Tất cả khai báo trong `@theme inline` để có utility (`bg-surface-2`, `text-good`…).
@@ -47,12 +49,14 @@ Giải quyết các điểm mở của spec/plan. Mỗi mục: **Decision · Rat
 
 **Decision**: Mục tiêu **WCAG AA**: text thường ≥ 4.5:1, UI/large ≥ 3:1.
 - Dark: text `#E6E8EB`/nền `#0B0D10` (đậm), accent mint `#38E8C6` dùng cho mảng/icon/ă/ID — KHÔNG dùng mint làm body text dài.
-- Light: accent **`#0FA188`** (mint đậm) cho mực/đường nét đạt AA trên trắng; KHÔNG dùng `#38E8C6` làm mực trên nền sáng.
+- Light: accent **`#0A8470`** (mint đậm) cho mực/đường nét đạt AA trên trắng; KHÔNG dùng `#38E8C6` làm mực trên nền sáng.
 - Semantic (good/warn/crit) có biến thể dark/light riêng để giữ AA.
 
 **Rationale**: mint sáng rất hợp nền tối nhưng rớt contrast trên trắng → tách biến thể (đã áp cho logo-light).
 
 **Verify**: script đo contrast (Phase quality-gate) cho mọi cặp text/nền + control; ghi evidence.
+
+> **Đo thực tế (T022, 2026-06-25)**: ban đầu light accent `#0FA188` chỉ đạt 3.24:1/trắng (rớt 4.5 cho accent **text** nhỏ như Evidence chip + chữ trên nút) → chỉnh sâu thành **`#0A8470`** (4.62:1, qua cả "accent-on-white" lẫn "white-on-accent"). `--text-mute` cũng nâng để đạt 4.5: dark `#5E6671`→**`#7A828D`** (4.87), light `#8A929E`→**`#6B7480`** (4.74). Sau chỉnh: **mọi cặp PASS** ở cả 2 mode (xem evidence quality-gate).
 
 ## R6. Mã hoá trạng thái màu + hình (a11y)
 

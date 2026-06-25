@@ -87,7 +87,7 @@
   --card-foreground: #14171c;
   --popover: #ffffff;
   --popover-foreground: #14171c;
-  --primary: #0fa188;
+  --primary: #0a8470; /* deep mint — AA on white as text + white-on-it (SC-004) */
   --primary-foreground: #ffffff;
   --secondary: #f1f3f5;
   --secondary-foreground: #14171c;
@@ -98,8 +98,8 @@
   --destructive: #d2483e;
   --border: #e2e6eb;
   --input: #e2e6eb;
-  --ring: #0fa188;
-  --chart-1: #0fa188;
+  --ring: #0a8470;
+  --chart-1: #0a8470;
   --chart-2: #1f9d5b;
   --chart-3: #b47914;
   --chart-4: #586170;
@@ -107,12 +107,12 @@
   --radius: 0.4rem;
   --sidebar: #f6f7f9;
   --sidebar-foreground: #14171c;
-  --sidebar-primary: #0fa188;
+  --sidebar-primary: #0a8470;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f1f3f5;
   --sidebar-accent-foreground: #14171c;
   --sidebar-border: #e2e6eb;
-  --sidebar-ring: #0fa188;
+  --sidebar-ring: #0a8470;
 
   /* SpecDeck — surfaces */
   --ground: #f6f7f9;
@@ -122,17 +122,17 @@
 
   /* SpecDeck — text levels */
   --text-dim: #586170;
-  --text-mute: #8a929e;
+  --text-mute: #6b7480;
 
-  /* SpecDeck — accent (mint, light variant for AA on white) */
+  /* SpecDeck — accent (deep mint, light variant for AA on white) */
   --accent-ink: #ffffff;
-  --accent-soft: rgba(15, 161, 136, 0.12);
+  --accent-soft: rgba(10, 132, 112, 0.12);
 
   /* SpecDeck — semantic state */
   --good: #1f9d5b;
   --warn: #b47914;
   --crit: #d2483e;
-  --running: #0fa188;
+  --running: #0a8470;
 
   /* SpecDeck — elevation */
   --shadow-card: 0 1px 2px rgb(20 20 24 / 0.06);
@@ -192,7 +192,7 @@
 
   /* SpecDeck — text levels */
   --text-dim: #99a1ac;
-  --text-mute: #5e6671;
+  --text-mute: #7a828d;
 
   /* SpecDeck — accent (electric mint) */
   --accent-ink: #04130f;

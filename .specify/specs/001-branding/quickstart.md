@@ -36,7 +36,7 @@ grep -rnE '#[0-9a-fA-F]{3,8}\b|oklch\(|\brgb[a]?\(' src \
 ## V4 — Tương phản AA cả 2 mode (SC-004, C5)
 
 - Dùng DevTools (Lighthouse/axe) hoặc script đo contrast cho: text/nền, text-dim/nền, primary/primary-foreground, các semantic trên nền tương ứng — ở **cả** dark và light.
-- **Expected**: text ≥ 4.5:1, UI/large ≥ 3:1. Light dùng accent `#0FA188` (không `#38E8C6`).
+- **Expected**: text ≥ 4.5:1, UI/large ≥ 3:1. Light dùng accent `#0A8470` (không `#38E8C6`).
 
 ## V5 — Grayscale: trạng thái đọc được không nhờ màu (SC-001, C2)
 

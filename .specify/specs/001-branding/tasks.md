@@ -23,8 +23,8 @@ description: "Task list — 001-branding (Control room design system)"
 
 **Purpose**: chuẩn bị docs + harness trước khi chạm code Next.
 
-- [ ] T001 [P] Đọc Next 16 docs trong `web/node_modules/next/dist/docs/` (next/font/local, Tailwind v4 `@theme`, metadata file-convention) theo `web/AGENTS.md`; xác nhận API khớp research.md (R3) — nếu lệch, ghi đính chính vào `.specify/specs/001-branding/research.md`. *Done*: note "Docs verified <ngày>" có trong research.md.
-- [ ] T002 Xác nhận test harness `web/` cho TDD theme-toggle: nếu chưa có Vitest+RTL thì `pnpm --dir web add -D vitest @testing-library/react @testing-library/jest-dom jsdom` + `web/vitest.config.ts` + script `"test"` trong `web/package.json`. *Done*: `pnpm --dir web test` chạy được (0 test vẫn exit 0). Nếu bỏ qua, nói rõ lý do.
+- [X] T001 [P] Đọc Next 16 docs trong `web/node_modules/next/dist/docs/` (next/font/local, Tailwind v4 `@theme`, metadata file-convention) theo `web/AGENTS.md`; xác nhận API khớp research.md (R3) — nếu lệch, ghi đính chính vào `.specify/specs/001-branding/research.md`. *Done*: note "Docs verified <ngày>" có trong research.md.
+- [X] T002 Xác nhận test harness `web/` cho TDD theme-toggle: Vitest 4 + RTL + jsdom + @vitejs/plugin-react + vite-tsconfig-paths đã cài; `web/vitest.config.mts` + `web/vitest.setup.ts` (jest-dom); script `"test": "vitest run --passWithNoTests"`. *Done*: `pnpm --dir web test` exit 0 (No test files).
 
 ---
 
@@ -32,10 +32,10 @@ description: "Task list — 001-branding (Control room design system)"
 
 **Purpose**: Unit 1 (Fonts) + Unit 2 (Tokens dark) — nền chung cho MỌI story. **⚠️ Không story nào bắt đầu trước khi xong phase này.**
 
-- [ ] T003 [P] Thêm font self-host vào `web/src/fonts/`: IBM Plex Sans variable TTF (đã tải) + IBM Plex Mono Regular/Medium (tải Google Fonts OFL mirror) + `OFL.txt`; subset latin + latin-ext (dấu tiếng Việt). *Done*: đủ file font + giấy phép tồn tại.
-- [ ] T004 Khai báo `next/font/local` trong `web/src/app/layout.tsx`: Plex Sans (variable, `weight "100 700"`, `variable "--font-sans"`, `display "swap"`) + Plex Mono (400/500, `variable "--font-mono"`); **gỡ Geist/Geist_Mono**; gắn class vào `<html>/<body>`. (depends T003) *Done*: trang render bằng Plex; DevTools Network 0 request host font ngoài.
-- [ ] T005 [P] Thay palette shadcn mặc định (oklch) trong `web/src/app/globals.css` bằng token control-room **dark**: set lại biến shadcn (`--background --foreground --card --popover --primary --secondary --muted --accent --destructive --border --input --ring`) theo cột Dark của [data-model.md](./data-model.md). *Done*: `--color-*` resolve đúng tông near-black + mint `#38E8C6`.
-- [ ] T006 Mở rộng `@theme inline` + `:root` trong `web/src/app/globals.css` với token riêng SpecDeck (dark): `--ground --surface-2 --text-dim --text-mute --accent-ink --accent-soft`, semantic `--good/--warn/--crit/--running`, board `--col-backlog/plan/review/done`, check `--check-pass/fail/pending/running`, `--evidence --fastlane`, `--radius 0.4rem`, `--ring`, `--shadow-card`. (same file → depends T005) *Done*: utility `bg-surface-2 text-good text-dim border-strong rounded-md font-mono` khả dụng; 0 hardcode trong component.
+- [X] T003 [P] Thêm font self-host vào `web/src/fonts/`: IBM Plex Sans variable TTF (đã tải) + IBM Plex Mono Regular/Medium (tải Google Fonts OFL mirror) + `OFL.txt`; subset latin + latin-ext (dấu tiếng Việt). *Done*: đủ file font + giấy phép tồn tại.
+- [X] T004 Khai báo `next/font/local` trong `web/src/app/layout.tsx`: Plex Sans (variable, `weight "100 700"`, `variable "--font-sans"`, `display "swap"`) + Plex Mono (400/500, `variable "--font-mono"`); **gỡ Geist/Geist_Mono**; gắn class vào `<html>/<body>`. (depends T003) *Done*: trang render bằng Plex; DevTools Network 0 request host font ngoài.
+- [X] T005 [P] Thay palette shadcn mặc định (oklch) trong `web/src/app/globals.css` bằng token control-room **dark**: set lại biến shadcn (`--background --foreground --card --popover --primary --secondary --muted --accent --destructive --border --input --ring`) theo cột Dark của [data-model.md](./data-model.md). *Done*: `--color-*` resolve đúng tông near-black + mint `#38E8C6`.
+- [X] T006 Mở rộng `@theme inline` + `:root` trong `web/src/app/globals.css` với token riêng SpecDeck (dark): `--ground --surface-2 --text-dim --text-mute --accent-ink --accent-soft`, semantic `--good/--warn/--crit/--running`, board `--col-backlog/plan/review/done`, check `--check-pass/fail/pending/running`, `--evidence --fastlane`, `--radius 0.4rem`, `--ring`, `--shadow-card`. (same file → depends T005) *Done*: utility `bg-surface-2 text-good text-dim border-strong rounded-md font-mono` khả dụng; 0 hardcode trong component.
 
 **Checkpoint**: app render Plex + nền control-room dark; bộ token (dark) đầy đủ — story có thể bắt đầu.
 
@@ -47,11 +47,11 @@ description: "Task list — 001-branding (Control room design system)"
 
 **Independent Test**: mở shell đã re-skin, bật grayscale → vẫn phân biệt **4 cột** + **4 trạng thái Check**; Check thiếu Evidence không hiện như pass.
 
-- [ ] T007 [P] [US1] `ColumnTag` trong `web/src/components/status/column-tag.tsx` — dot màu `--col-{backlog,plan,review,done}` + tên cột; chỉ Review tô accent (running). (C2)
-- [ ] T008 [P] [US1] `CheckBadge` trong `web/src/components/status/check-badge.tsx` — pass `✓` tròn đặc / fail `✕` tròn đặc / pending vòng rỗng / running dot+pulse; mỗi state = **màu + hình + nhãn**; pulse tắt khi `prefers-reduced-motion`. (FR-003, C2, FR-010)
-- [ ] T009 [P] [US1] `EvidenceChip` trong `web/src/components/status/evidence-chip.tsx` — chip icon `--evidence`; **Check thiếu Evidence ⇒ KHÔNG render như pass**, hiện "chưa pass". (Nguyên tắc I, AC US1-2)
-- [ ] T010 [US1] Re-skin demo board trong `web/src/app/page.tsx`: 4 cột + vài card minh hoạ dùng `ColumnTag`/`CheckBadge`/`EvidenceChip`; thay skeleton ping/SSE sang surface control-room. (depends T007–T009; shared page.tsx) *Done*: shell hiện board demo control-room.
-- [ ] T011 [US1] Verify US1 (thủ công): `filter: grayscale(1)` vẫn phân biệt 4 cột + 4 check; `prefers-reduced-motion` dừng pulse mà trạng thái vẫn rõ (quickstart V5). *Done*: SC-001 pass; đính Evidence.
+- [X] T007 [P] [US1] `ColumnTag` trong `web/src/components/status/column-tag.tsx` — dot màu `--col-{backlog,plan,review,done}` + tên cột; chỉ Review tô accent (running). (C2)
+- [X] T008 [P] [US1] `CheckBadge` trong `web/src/components/status/check-badge.tsx` — pass `✓` tròn đặc / fail `✕` tròn đặc / pending vòng rỗng / running dot+pulse; mỗi state = **màu + hình + nhãn**; pulse tắt khi `prefers-reduced-motion`. (FR-003, C2, FR-010)
+- [X] T009 [P] [US1] `EvidenceChip` trong `web/src/components/status/evidence-chip.tsx` — chip icon `--evidence`; **Check thiếu Evidence ⇒ KHÔNG render như pass**, hiện "chưa pass". (Nguyên tắc I, AC US1-2)
+- [X] T010 [US1] Re-skin demo board trong `web/src/app/page.tsx`: 4 cột + vài card minh hoạ dùng `ColumnTag`/`CheckBadge`/`EvidenceChip`; thay skeleton ping/SSE sang surface control-room. (depends T007–T009; shared page.tsx) *Done*: shell hiện board demo control-room.
+- [X] T011 [US1] Verify US1 (thủ công): `filter: grayscale(1)` vẫn phân biệt 4 cột + 4 check; `prefers-reduced-motion` dừng pulse mà trạng thái vẫn rõ (quickstart V5). *Done*: SC-001 pass; đính Evidence.
 
 **Checkpoint**: MVP — status đọc được trong một liếc, kể cả grayscale.
 
@@ -63,10 +63,10 @@ description: "Task list — 001-branding (Control room design system)"
 
 **Independent Test**: `grep` `web/src` không còn hardcode màu; thêm shadcn component mới → đúng brand không sửa màu; app bar có wordmark+mark+favicon.
 
-- [ ] T012 [P] [US2] Brand component `<Logo>`/`<Wordmark>` trong `web/src/components/brand/` dùng asset `web/public/brand/` (hoặc inline mark Columns, accent token); **KHÔNG vẽ lại mark**, không méo/xoay/bóng. (C6, FR-005)
-- [ ] T013 [US2] App bar: gắn wordmark + mark (accent) vào shell `web/src/app/page.tsx`; xác nhận favicon tab khớp (file-convention `web/src/app/` đã có, không nhét `<link>` tay). (depends T010, T012; shared page.tsx)
-- [ ] T014 [US2] Hoàn tất chrome control-room toàn shell trong `web/src/app/page.tsx` (surface/border/spacing/typography Plex) — **loại bỏ hẳn look shadcn/Tailwind mặc định** (FR-009). (shared page.tsx → sau T013)
-- [ ] T015 [US2] Token-consume audit: thêm thử 1 component shadcn mới (vd `badge` trong `web/src/components/ui/`) → hiển thị đúng brand **không override màu** (SC-006). *Done*: ảnh/note Evidence.
+- [X] T012 [P] [US2] Brand component `<Logo>`/`<Wordmark>` trong `web/src/components/brand/` dùng asset `web/public/brand/` (hoặc inline mark Columns, accent token); **KHÔNG vẽ lại mark**, không méo/xoay/bóng. (C6, FR-005)
+- [X] T013 [US2] App bar: gắn wordmark + mark (accent) vào shell `web/src/app/page.tsx`; xác nhận favicon tab khớp (file-convention `web/src/app/` đã có, không nhét `<link>` tay). (depends T010, T012; shared page.tsx)
+- [X] T014 [US2] Hoàn tất chrome control-room toàn shell trong `web/src/app/page.tsx` (surface/border/spacing/typography Plex) — **loại bỏ hẳn look shadcn/Tailwind mặc định** (FR-009). (shared page.tsx → sau T013)
+- [X] T015 [US2] Token-consume audit: thêm thử 1 component shadcn mới (vd `badge` trong `web/src/components/ui/`) → hiển thị đúng brand **không override màu** (SC-006). *Done*: ảnh/note Evidence.
 
 **Checkpoint**: brand thống nhất; shadcn kế thừa token.
 
@@ -78,11 +78,11 @@ description: "Task list — 001-branding (Control room design system)"
 
 **Independent Test**: đổi mode 1 thao tác không reload; AA cả 2 mode; reload giữ mode; tab ẩn danh lần đầu = dark.
 
-- [ ] T016 [US3] **(TDD — viết test FAIL trước)** `web/src/components/__tests__/theme-toggle.test.tsx`: render toggle, click → `setTheme` gọi đúng giá trị / phản ánh `resolvedTheme`. Chạy `pnpm --dir web test` → **FAIL** (chưa có component) trước khi qua T019. (Nguyên tắc VI)
-- [ ] T017 [US3] `pnpm --dir web add next-themes`; `web/src/components/theme-provider.tsx` (`"use client"`) bọc `ThemeProvider` `attribute="class"` `defaultTheme="dark"` `enableSystem` `disableTransitionOnChange`. (C3, R1)
-- [ ] T018 [US3] Bọc children bằng `<ThemeProvider>` + thêm `suppressHydrationWarning` vào `<html>` trong `web/src/app/layout.tsx`. (depends T004, T017; shared layout.tsx)
-- [ ] T019 [US3] `web/src/components/theme-toggle.tsx` (`"use client"`) dùng `useTheme()` đổi dark/light/system; gắn vào app bar. (depends T016, T017) *Done*: T016 **PASS**; đổi mode không reload, reload giữ, không FOUC (anti-FOUC do lib).
-- [ ] T020 [US3] Token **light** + biến thể mint AA trong `web/src/app/globals.css` (`:root` light đảo đúng theo data-model.md; mint nền sáng = `#0FA188`, **không** `#38E8C6`). (depends T006; shared globals.css) *Done*: light đọc tốt, giữ bản sắc control-room.
+- [X] T016 [US3] **(TDD — viết test FAIL trước)** `web/src/components/__tests__/theme-toggle.test.tsx`: render toggle, click → `setTheme` gọi đúng giá trị / phản ánh `resolvedTheme`. Chạy `pnpm --dir web test` → **FAIL** (chưa có component) trước khi qua T019. (Nguyên tắc VI)
+- [X] T017 [US3] `pnpm --dir web add next-themes`; `web/src/components/theme-provider.tsx` (`"use client"`) bọc `ThemeProvider` `attribute="class"` `defaultTheme="dark"` `enableSystem` `disableTransitionOnChange`. (C3, R1)
+- [X] T018 [US3] Bọc children bằng `<ThemeProvider>` + thêm `suppressHydrationWarning` vào `<html>` trong `web/src/app/layout.tsx`. (depends T004, T017; shared layout.tsx)
+- [X] T019 [US3] `web/src/components/theme-toggle.tsx` (`"use client"`) dùng `useTheme()` đổi dark/light/system; gắn vào app bar. (depends T016, T017) *Done*: T016 **PASS**; đổi mode không reload, reload giữ, không FOUC (anti-FOUC do lib).
+- [X] T020 [US3] Token **light** + biến thể mint AA trong `web/src/app/globals.css` (`:root` light đảo đúng theo data-model.md; mint nền sáng = `#0A8470`, **không** `#38E8C6`). (depends T006; shared globals.css) *Done*: light đọc tốt, giữ bản sắc control-room.
 
 **Checkpoint**: dark↔light hoạt động, persist, AA.
 
