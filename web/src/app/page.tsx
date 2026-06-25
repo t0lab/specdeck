@@ -1,3 +1,5 @@
+import { Logo } from "@/components/brand/logo";
+import { Badge } from "@/components/ui/badge";
 import {
   CheckBadge,
   type CheckState,
@@ -16,7 +18,12 @@ type Check = {
   evidence?: string;
   missingEvidence?: boolean;
 };
-type SpecCard = { id: string; title: string; checks: Check[] };
+type SpecCard = {
+  id: string;
+  title: string;
+  checks: Check[];
+  fastlane?: boolean;
+};
 type Column = { column: BoardColumn; cards: SpecCard[] };
 
 const BOARD: Column[] = [
@@ -33,6 +40,7 @@ const BOARD: Column[] = [
       {
         id: "SPEC-018",
         title: "Magic-link login",
+        fastlane: true,
         checks: [
           { label: "Acceptance soạn xong", state: "pass", evidence: "#" },
           { label: "Rate-limit policy", state: "pending" },
@@ -117,6 +125,11 @@ function Card({ card }: { card: SpecCard }) {
       <h3 className="mt-1 text-sm font-medium leading-snug tracking-tight">
         {card.title}
       </h3>
+      {card.fastlane && (
+        <Badge variant="outline" className="mt-2 border-fastlane/40 text-fastlane">
+          Fast lane
+        </Badge>
+      )}
       {card.checks.length > 0 && (
         <ul className="mt-2 border-t border-border/60 pt-1.5">
           {card.checks.map((check) => (
@@ -131,9 +144,9 @@ function Card({ card }: { card: SpecCard }) {
 export default function Home() {
   return (
     <div className="min-h-full bg-ground">
-      <header className="border-b border-border bg-background/80 px-6 py-4 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-border bg-background/80 px-6 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <span className="text-lg font-semibold tracking-tight">SpecDeck</span>
+          <Logo />
           <span className="font-mono text-xs text-mute">
             review specs, not diffs
           </span>
