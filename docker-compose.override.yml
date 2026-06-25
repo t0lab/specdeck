@@ -1,0 +1,51 @@
+# Local dev hot-reload layer. `docker compose` auto-merges this on top of
+# docker-compose.yml — no -f flag needed. It bind-mounts host source into the
+# already dev-mode containers so edits reload live, without rebuilding images.
+#
+# Pattern: bind-mount the source dir, then shadow the dependency dir with an
+# ANONYMOUS volume so the host (which may have OS-specific or absent deps) never
+# clobbers the linux deps baked into the image during build.
+#
+# GOTCHA: anonymous volumes persist across `up`. After changing deps (editing
+# package.json / pyproject.toml + rebuild), recreate volumes so the new deps
+# surface: `docker compose down -v && docker compose up --build`.
+#
+# Production deploy ignores this file (use `docker compose -f docker-compose.yml ...`).
+
+services:
+  web:
+    # Next dev (Turbopack) watches via inotify on the bind mount. If running on
+    # a VM / networked FS where FS events don't propagate, uncomment polling.
+    # environment:
+    #   WATCHPACK_POLLING: "true"
+    volumes:
+      - ./web:/app
+      - /app/node_modules # keep image's linux node_modules (sharp, etc.)
+      - /app/.next # keep build cache inside the container
+
+  gateway:
+    # Add --reload; restrict watched dirs to our source (not the .venv volume),
+    # which resolves to live host files via the editable workspace install.
+    command:
+      - uv
+      - run
+      - uvicorn
+      - specdeck_gateway.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
+      - --reload-dir
+      - /app/gateway/src
+      - --reload-dir
+      - /app/shared/src
+    volumes:
+      - ./backend:/app
+      - /app/.venv # keep image's linux virtualenv
+
+  agent:
+    # `langgraph dev` already hot-reloads its graphs; just mount live source.
+    volumes:
+      - ./backend:/app
+      - /app/.venv # keep image's linux virtualenv
