@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img" aria-label="SpecDeck">
+  <title>SpecDeck mark</title>
+  <!-- Kanban columns: Backlog · Plan · Review (accent) · Done. On-dark colourway. -->
+  <g fill="none" stroke-width="6" stroke-linecap="round">
+    <path d="M8 39V25" stroke="#E6E8EB"/>
+    <path d="M18.67 39V18" stroke="#E6E8EB"/>
+    <path d="M29.33 39V11" stroke="#38E8C6"/>
+    <path d="M40 39V22" stroke="#E6E8EB"/>
+  </g>
+</svg>

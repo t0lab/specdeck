@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none" role="img" aria-label="SpecDeck">
+  <title>SpecDeck mark — monochrome</title>
+  <!-- Single-colour. Inherits text colour via currentColor: set color:#fff on dark, color:#111 on light. -->
+  <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+    <path d="M8 39V25"/>
+    <path d="M18.67 39V18"/>
+    <path d="M29.33 39V11"/>
+    <path d="M40 39V22"/>
+  </g>
+</svg>
