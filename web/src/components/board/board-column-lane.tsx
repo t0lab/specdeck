@@ -32,7 +32,7 @@ function SortableSpecCard({ card }: { card: SpecCard }) {
       {...attributes}
       {...listeners}
     >
-      <SpecCardView card={card} />
+      <SpecCardView card={card} interactive />
     </div>
   );
 }

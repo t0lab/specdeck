@@ -1,39 +1,47 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 import { Badge } from "@/components/ui/badge";
+import { RunningBadge } from "@/components/status/running-badge";
+import { OpenFullLink } from "@/components/detail/open-full-link";
 import { checkProgress } from "@/lib/check-progress";
 import { cn } from "@/lib/utils";
-import type { AgentRole, SpecCard } from "@/mock/types";
+import type { SpecCard } from "@/mock/types";
 
-// One Spec rendered as a board card: code + title + Check progress, plus the
-// Fast lane and "agent running" badges. Progress comes from checkProgress, so a
-// pass missing Evidence is never counted — the board fraction can't read green
-// for unevidenced work (SC-004). Click-to-open is wired in US4.
-
-function RunningBadge({ role }: { role: AgentRole }) {
-  const label = `${role[0].toUpperCase()}${role.slice(1)} running`;
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-md border border-running/40 px-1.5 py-0.5 text-xs font-medium text-running">
-      {/* pulsing dot — distinct shape, not colour-only; stilled by reduced-motion */}
-      <span className="relative grid size-2.5 place-items-center" aria-hidden>
-        <span className="absolute inline-flex size-2.5 animate-ping rounded-full bg-running opacity-60" />
-        <span className="relative size-1.5 rounded-full bg-running" />
-      </span>
-      {label}
-    </span>
-  );
-}
-
+// One Spec as a board card: code + title + Check progress, plus Fast lane and
+// agent-running badges. Progress comes from checkProgress, so an unevidenced
+// pass never counts toward green (SC-004).
+//
+// When `interactive`, the card opens its detail (US4): a plain click soft-navs
+// to /board/[spec] (the drawer, via interception); ⌘/Ctrl-click opens the full
+// page in a new tab; the hover "Open full" affordance jumps straight there.
 export function SpecCardView({
   card,
   className,
+  interactive = false,
 }: {
   card: SpecCard;
   className?: string;
+  interactive?: boolean;
 }) {
+  const router = useRouter();
   const { passed, total } = checkProgress(card.checks);
+
+  function handleClick(e: React.MouseEvent) {
+    if (e.metaKey || e.ctrlKey) {
+      window.open(`/board/${card.id}`, "_blank", "noopener,noreferrer");
+    } else {
+      router.push(`/board/${card.id}`);
+    }
+  }
+
   return (
     <article
+      onClick={interactive ? handleClick : undefined}
       className={cn(
-        "flex flex-col gap-2 rounded-md border border-border bg-surface p-3 shadow-(--shadow-card)",
+        "group/card flex flex-col gap-2 rounded-md border border-border bg-surface p-3 shadow-(--shadow-card)",
+        interactive && "cursor-pointer transition-colors hover:border-strong",
         className,
       )}
     >
@@ -80,6 +88,14 @@ export function SpecCardView({
             style={{ width: `${total === 0 ? 0 : (passed / total) * 100}%` }}
           />
         </div>
+      )}
+
+      {interactive && (
+        <OpenFullLink
+          specId={card.id}
+          className="opacity-0 transition-opacity group-hover/card:opacity-100 focus-visible:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        />
       )}
     </article>
   );
