@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 // Self-hosted IBM Plex (subset: latin + latin-ext + Vietnamese). Static instances
 // 400/500/600 for Sans, 400/500 for Mono — no CDN requests (FR-006 / SC-005).
 const plexSans = localFont({
@@ -39,9 +41,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${plexSans.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
