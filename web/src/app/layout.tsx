@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+// Side-effect import: runs createEnv() at module load so a malformed env
+// fails the build/boot before any page renders (F1 — fail-fast).
+import "@/env";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Providers } from "@/app/providers";
 
 // Self-hosted IBM Plex (subset: latin + latin-ext + Vietnamese). Static instances
 // 400/500/600 for Sans, 400/500 for Mono — no CDN requests (FR-006 / SC-005).
@@ -51,7 +55,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Providers>{children}</Providers>
         </ThemeProvider>
       </body>
     </html>
