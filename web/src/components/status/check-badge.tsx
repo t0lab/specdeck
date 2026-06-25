@@ -9,7 +9,7 @@ export type CheckState = "pass" | "fail" | "pending" | "running";
 const LABELS: Record<CheckState, string> = {
   pass: "Pass",
   fail: "Fail",
-  pending: "Chờ",
+  pending: "Pending",
   running: "Running",
 };
 

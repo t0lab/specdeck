@@ -24,7 +24,7 @@ export function EvidenceChip({
         )}
       >
         <TriangleAlert className="size-3" aria-hidden />
-        Thiếu Evidence
+        No evidence
       </span>
     );
   }

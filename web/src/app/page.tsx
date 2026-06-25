@@ -1,4 +1,5 @@
 import { Logo } from "@/components/brand/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import {
   CheckBadge,
@@ -101,7 +102,7 @@ function CheckRow({ check }: { check: Check }) {
         <EvidenceChip missing />
       ) : (
         check.state === "pass" &&
-        check.evidence && <EvidenceChip href={check.evidence} label="xem" />
+        check.evidence && <EvidenceChip href={check.evidence} label="view" />
       )}
     </li>
   );
@@ -147,9 +148,12 @@ export default function Home() {
       <header className="sticky top-0 z-10 border-b border-border bg-background/80 px-6 py-3 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <Logo />
-          <span className="font-mono text-xs text-mute">
-            review specs, not diffs
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="hidden font-mono text-xs text-mute sm:inline">
+              review specs, not diffs
+            </span>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
