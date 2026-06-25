@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "SVG Logo Designer": {
+      "source": "rknall/claude-skills",
+      "sourceType": "github",
+      "skillPath": "svg-logo-designer/SKILL.md",
+      "computedHash": "c591208a052cc9f7deb77be1183e4627daf54dbf575ea2653f519f29fe3bd4c8"
+    },
     "branch-strategy": {
       "source": "/home/liamlee/.npm/_npx/0bd38d85e8e9279d/node_modules/@harness-kit/cli/skills/branch-strategy",
       "sourceType": "local",
@@ -90,6 +96,24 @@
       "skillPath": "skills/minimalist-skill/SKILL.md",
       "computedHash": "08873a3131d3be27bef9bf3304b310b16b44ca6e3561aebe532797be3443f6bd"
     },
+    "next-browser": {
+      "source": "vercel-labs/next-browser",
+      "sourceType": "github",
+      "skillPath": "skills/next-browser/SKILL.md",
+      "computedHash": "d8e316eaad3004a1de8f6f4e1b1f774a180a65f22bc821ec07eb492a3f2689ae"
+    },
+    "next-cache-components-adoption": {
+      "source": "vercel/next.js",
+      "sourceType": "github",
+      "skillPath": "skills/next-cache-components-adoption/SKILL.md",
+      "computedHash": "a080096dcaf684bbcc81516892c204c4ec370e26b84c3e18f6200c785631bad0"
+    },
+    "next-cache-components-optimizer": {
+      "source": "vercel/next.js",
+      "sourceType": "github",
+      "skillPath": "skills/next-cache-components-optimizer/SKILL.md",
+      "computedHash": "b8d757a1fe10ebe7b10de1d5ee83f9bcdbd1de1e1147efc68cf249377f471067"
+    },
     "parallel-agents": {
       "source": "/home/liamlee/.npm/_npx/0bd38d85e8e9279d/node_modules/@harness-kit/cli/skills/parallel-agents",
       "sourceType": "local",
@@ -109,6 +133,12 @@
       "source": "/home/liamlee/.npm/_npx/0bd38d85e8e9279d/node_modules/@harness-kit/cli/skills/security-review",
       "sourceType": "local",
       "computedHash": "f97a3a7463ddb60885f30deb1cd5282ff93ed2c2e567caf1329267bf1cea5834"
+    },
+    "seo-audit": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/seo-audit/SKILL.md",
+      "computedHash": "f2dc52130189068981f21e1c0bdc4471ac7cd9b08d8a1320604411aa0f950385"
     },
     "spec-driven": {
       "source": "/home/liamlee/.npm/_npx/0bd38d85e8e9279d/node_modules/@harness-kit/cli/skills/spec-driven",
