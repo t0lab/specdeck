@@ -1,0 +1,8 @@
+# kanban
+
+> kanban
+
+## Docs Index
+
+- CLAUDE.md — AI agent instructions and project context
+- AGENTS.md — project map and key file pointers
