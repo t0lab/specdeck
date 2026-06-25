@@ -1,75 +1,161 @@
-"use client";
+import {
+  CheckBadge,
+  type CheckState,
+} from "@/components/status/check-badge";
+import {
+  ColumnTag,
+  type BoardColumn,
+} from "@/components/status/column-tag";
+import { EvidenceChip } from "@/components/status/evidence-chip";
 
-import { useState } from "react";
+// Mock content only — illustrates the design system on the surfaces it will skin.
+// The real board + data layer is a later feature (see spec Assumptions).
+type Check = {
+  label: string;
+  state: CheckState;
+  evidence?: string;
+  missingEvidence?: boolean;
+};
+type SpecCard = { id: string; title: string; checks: Check[] };
+type Column = { column: BoardColumn; cards: SpecCard[] };
 
-import { Button } from "@/components/ui/button";
+const BOARD: Column[] = [
+  {
+    column: "backlog",
+    cards: [
+      { id: "SPEC-021", title: "Export board as weekly digest", checks: [] },
+      { id: "SPEC-022", title: "Keyboard-only navigation", checks: [] },
+    ],
+  },
+  {
+    column: "plan",
+    cards: [
+      {
+        id: "SPEC-018",
+        title: "Magic-link login",
+        checks: [
+          { label: "Acceptance soạn xong", state: "pass", evidence: "#" },
+          { label: "Rate-limit policy", state: "pending" },
+        ],
+      },
+    ],
+  },
+  {
+    column: "review",
+    cards: [
+      {
+        id: "SPEC-014",
+        title: "Realtime SSE xuống board",
+        checks: [
+          { label: "Build + typecheck", state: "pass", evidence: "#" },
+          { label: "E2E reconnect flow", state: "running" },
+          { label: "Load test 1k clients", state: "pass", missingEvidence: true },
+        ],
+      },
+      {
+        id: "SPEC-016",
+        title: "Checker chạy độc lập model",
+        checks: [
+          { label: "Held-out checks", state: "fail", evidence: "#" },
+          { label: "Prompt-injection guard", state: "pending" },
+        ],
+      },
+    ],
+  },
+  {
+    column: "done",
+    cards: [
+      {
+        id: "SPEC-009",
+        title: "Spec contract schema",
+        checks: [
+          { label: "Unit + contract tests", state: "pass", evidence: "#" },
+          { label: "Migration applied", state: "pass", evidence: "#" },
+        ],
+      },
+    ],
+  },
+];
 
-// Empty = same origin: the browser hits /api/* on this domain, and the
-// Cloudflare tunnel routes /api to the gateway. Set NEXT_PUBLIC_GATEWAY_URL
-// for local non-docker dev (e.g. http://localhost:8000).
-const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL ?? "";
+function CheckRow({ check }: { check: Check }) {
+  // Principle I: a pass-worthy Check missing Evidence must not read as pass.
+  const showMissing = check.state === "pass" && check.missingEvidence;
+  return (
+    <li className="flex items-center justify-between gap-3 py-1">
+      <CheckBadge
+        state={showMissing ? "pending" : check.state}
+        className="min-w-0"
+      />
+      <span className="min-w-0 flex-1 truncate text-xs text-dim">
+        {check.label}
+      </span>
+      {showMissing ? (
+        <EvidenceChip missing />
+      ) : (
+        check.state === "pass" &&
+        check.evidence && <EvidenceChip href={check.evidence} label="xem" />
+      )}
+    </li>
+  );
+}
+
+function Card({ card }: { card: SpecCard }) {
+  return (
+    <article className="rounded-md border border-border bg-surface p-3 shadow-(--shadow-card) transition-colors hover:border-strong">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="font-mono text-xs text-mute tabular-nums">
+          {card.id}
+        </span>
+        {card.checks.length > 0 && (
+          <span className="font-mono text-xs text-mute tabular-nums">
+            {card.checks.filter((c) => c.state === "pass" && !c.missingEvidence)
+              .length}
+            /{card.checks.length}
+          </span>
+        )}
+      </div>
+      <h3 className="mt-1 text-sm font-medium leading-snug tracking-tight">
+        {card.title}
+      </h3>
+      {card.checks.length > 0 && (
+        <ul className="mt-2 border-t border-border/60 pt-1.5">
+          {card.checks.map((check) => (
+            <CheckRow key={check.label} check={check} />
+          ))}
+        </ul>
+      )}
+    </article>
+  );
+}
 
 export default function Home() {
-  const [health, setHealth] = useState("—");
-  const [ticks, setTicks] = useState<string[]>([]);
-
-  async function pingGateway() {
-    setHealth("…");
-    try {
-      const res = await fetch(`${GATEWAY}/api/health`);
-      setHealth(JSON.stringify(await res.json()));
-    } catch (err) {
-      setHealth(`error: ${String(err)}`);
-    }
-  }
-
-  function startStream() {
-    setTicks([]);
-    const es = new EventSource(`${GATEWAY}/api/stream`);
-    es.addEventListener("tick", (e) =>
-      setTicks((t) => [...t, (e as MessageEvent).data]),
-    );
-    es.addEventListener("done", () => es.close());
-    es.onerror = () => es.close();
-  }
-
   return (
-    <main className="mx-auto flex min-h-full w-full max-w-2xl flex-1 flex-col gap-8 px-6 py-20">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">🎛️ SpecDeck</h1>
-        <p className="text-muted-foreground">
-          Skeleton — web → gateway → agent. Review at the intent level, not the
-          diff.
-        </p>
+    <div className="min-h-full bg-ground">
+      <header className="border-b border-border bg-background/80 px-6 py-4 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+          <span className="text-lg font-semibold tracking-tight">SpecDeck</span>
+          <span className="font-mono text-xs text-mute">
+            review specs, not diffs
+          </span>
+        </div>
       </header>
 
-      <section className="space-y-3 rounded-lg border p-5">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="font-medium">Gateway health</h2>
-          <Button size="sm" onClick={pingGateway}>
-            Ping /health
-          </Button>
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {BOARD.map(({ column, cards }) => (
+            <section key={column} className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <ColumnTag column={column} count={cards.length} />
+              </div>
+              <div className="flex flex-col gap-3">
+                {cards.map((card) => (
+                  <Card key={card.id} card={card} />
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
-        <pre className="overflow-x-auto rounded bg-muted p-3 text-sm">
-          {health}
-        </pre>
-      </section>
-
-      <section className="space-y-3 rounded-lg border p-5">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="font-medium">SSE stream</h2>
-          <Button size="sm" variant="secondary" onClick={startStream}>
-            Start /api/stream
-          </Button>
-        </div>
-        <pre className="min-h-16 overflow-x-auto rounded bg-muted p-3 text-sm">
-          {ticks.length ? ticks.join("\n") : "—"}
-        </pre>
-      </section>
-
-      <footer className="mt-auto text-sm text-muted-foreground">
-        Gateway: <code>{GATEWAY || "(same origin)"}</code>
-      </footer>
-    </main>
+      </main>
+    </div>
   );
 }
