@@ -1,6 +1,6 @@
 # SpecDeck — Architecture
 
-> Bản đồ module + hướng phụ thuộc. **Pre-code:** đây là kiến trúc *dự kiến* (đã chốt qua ADR); điền chi tiết module khi scaffold xong. Quyết định gốc: [agent-architecture](docs/design-docs/agent-architecture.md), [stack](docs/design-docs/stack.md).
+> Bản đồ module + hướng phụ thuộc. **Skeleton đã scaffold** (web + backend gateway/agent/shared + docker-compose); logic board/agent thật chưa có. Quyết định gốc: [agent-architecture](docs/design-docs/agent-architecture.md), [stack](docs/design-docs/stack.md).
 
 ## Topology (3 tầng, kiểu DeerFlow v2)
 
@@ -26,7 +26,7 @@
 
 | Package | Vai trò | Được import từ |
 |---|---|---|
-| `frontend/` | Next.js + Tailwind + shadcn/ui; board, review checklist, inbox | (gọi Gateway qua REST/SSE) |
+| `web/` | Next.js + Tailwind + shadcn/ui; board, review checklist, inbox | (gọi Gateway qua REST/SSE) |
 | `backend/gateway/` | FastAPI: REST app API + bridge SSE; auth; lưu board/task/spec/check/evidence | `backend/shared` |
 | `backend/agent/` | LangGraph app: graph Planner/Builder/Checker, `langgraph.json`, middleware, checkpointer | `backend/shared` |
 | `backend/shared/` | Schema chung (Spec/Check/Evidence/event contract), types | (nothing) |
@@ -35,7 +35,7 @@
 
 ## Dependency direction (ràng buộc)
 
-- `frontend` **chỉ** nói chuyện với `gateway` (REST/SSE) — KHÔNG gọi thẳng Agent Server.
+- `web` **chỉ** nói chuyện với `gateway` (REST/SSE) — KHÔNG gọi thẳng Agent Server.
 - `gateway` điều phối Agent Server qua LangGraph SDK; là nơi *duy nhất* giữ secret/API-key (KHÔNG lộ ra FE).
 - `agent` không phụ thuộc `gateway`; giao tiếp qua LangGraph protocol + Redis pub/sub.
 - `backend/shared` thuần (schema/types), không I/O — cả gateway và agent đều import.

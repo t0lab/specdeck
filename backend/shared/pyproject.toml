@@ -1,0 +1,13 @@
+[project]
+name = "specdeck-shared"
+version = "0.1.0"
+description = "SpecDeck shared domain models (Spec / Check / Evidence / event contract)"
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.7"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/specdeck_shared"]

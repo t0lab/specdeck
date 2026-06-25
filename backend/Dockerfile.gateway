@@ -1,0 +1,13 @@
+# SpecDeck gateway image. Build context = ./backend (the uv workspace root),
+# because `gateway` depends on the `shared` workspace member.
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+WORKDIR /app
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+COPY . .
+RUN uv sync --frozen --package specdeck-gateway
+
+EXPOSE 8000
+CMD ["uv", "run", "uvicorn", "specdeck_gateway.main:app", "--host", "0.0.0.0", "--port", "8000"]

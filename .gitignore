@@ -1,0 +1,33 @@
+# ── Node / Next.js ──
+node_modules/
+.next/
+out/
+.pnpm-store/
+*-debug.log*
+
+# ── Python / uv ──
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# ── LangGraph ──
+.langgraph_api/
+
+# ── Env / secrets (never commit real values) ──
+.env
+.env.*
+!.env.example
+
+# ── Logs / coverage ──
+*.log
+coverage/
+htmlcov/
+
+# ── OS / editor ──
+.DS_Store
+Thumbs.db
+*.swp
+.idea/

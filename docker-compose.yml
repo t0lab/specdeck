@@ -1,0 +1,105 @@
+name: specdeck
+
+# No host ports are published. Services reach each other over Docker internal
+# DNS on the private `specdeck` network (e.g. gateway -> http://agent:2024,
+# http://postgres:5432, http://redis:6379).
+#
+# External access goes through the t0lab Cloudflare tunnel: only `web` and
+# `gateway` also join the shared external `t0lab_network`, where the
+# `timezlab_cloudflared` tunnel routes to them by container name:
+#   specdeck.<domain>      -> http://specdeck-web:3000
+#   specdeck-api.<domain>  -> http://specdeck-gateway:8000
+# postgres / redis / agent stay private — never exposed.
+
+services:
+  postgres:
+    container_name: specdeck-postgres
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-specdeck}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-specdeck}
+      POSTGRES_DB: ${POSTGRES_DB:-specdeck}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-specdeck}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks: [specdeck]
+
+  redis:
+    container_name: specdeck-redis
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks: [specdeck]
+
+  agent:
+    container_name: specdeck-agent
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.agent
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      LANGGRAPH_POSTGRES_URI: postgresql://${POSTGRES_USER:-specdeck}:${POSTGRES_PASSWORD:-specdeck}@postgres:5432/${POSTGRES_DB:-specdeck}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [specdeck]
+
+  gateway:
+    container_name: specdeck-gateway
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.gateway
+    environment:
+      AGENT_URL: http://agent:2024
+      DATABASE_URL: postgresql://${POSTGRES_USER:-specdeck}:${POSTGRES_PASSWORD:-specdeck}@postgres:5432/${POSTGRES_DB:-specdeck}
+      REDIS_URL: redis://redis:6379/0
+      WEB_ORIGIN: ${WEB_PUBLIC_URL:-http://localhost:3000}
+    depends_on:
+      - agent
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - specdeck
+      - t0lab_network
+
+  web:
+    container_name: specdeck-web
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    environment:
+      # Empty = same origin: browser calls /api/* on this domain; the tunnel
+      # routes /api to the gateway. No cross-origin, no CORS.
+      NEXT_PUBLIC_GATEWAY_URL: ${GATEWAY_PUBLIC_URL:-}
+    depends_on:
+      - gateway
+    restart: unless-stopped
+    networks:
+      - specdeck
+      - t0lab_network
+
+volumes:
+  pgdata:
+
+networks:
+  specdeck:
+    driver: bridge
+  # Shared network owned by the t0lab Cloudflare tunnel (timezlab_cloudflared).
+  # Bring the tunnel up first: `docker compose -f ~/t0lab/cloudflared up -d`.
+  t0lab_network:
+    external: true

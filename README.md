@@ -92,7 +92,7 @@ flowchart TD
 ## 📊 Trạng thái
 
 > [!WARNING]
-> **Concept / brainstorm.** Kiến trúc & stack đã chốt qua ADR; **chưa có application code** — đang chuẩn bị scaffold.
+> **Concept / brainstorm.** Kiến trúc & stack đã chốt qua ADR. **Skeleton đã scaffold** — web (Next.js+shadcn) · gateway (FastAPI) · agent (LangGraph) · docker-compose (Postgres+Redis); `docker compose up --build` chạy được. Chưa có logic board/Planner/Builder/Checker thật.
 
 ## 📚 Tài liệu
 

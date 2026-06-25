@@ -1,0 +1,8 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "planner": "./src/specdeck_agent/graph.py:planner_graph",
+    "builder": "./src/specdeck_agent/graph.py:builder_graph",
+    "checker": "./src/specdeck_agent/graph.py:checker_graph"
+  }
+}

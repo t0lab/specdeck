@@ -1,0 +1,23 @@
+# SpecDeck backend — uv workspace root (virtual; not a package itself).
+# Members are installed into one shared .venv for local dev; Docker images
+# slim down with `uv sync --package <name>`.
+[project]
+name = "specdeck-backend"
+version = "0.1.0"
+description = "SpecDeck backend — uv workspace (gateway + agent + shared)"
+requires-python = ">=3.12"
+dependencies = [
+    "specdeck-gateway",
+    "specdeck-agent",
+]
+
+[tool.uv.workspace]
+members = ["shared", "gateway", "agent"]
+
+[tool.uv.sources]
+specdeck-shared = { workspace = true }
+specdeck-gateway = { workspace = true }
+specdeck-agent = { workspace = true }
+
+[tool.uv]
+package = false

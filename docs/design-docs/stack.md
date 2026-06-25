@@ -22,8 +22,8 @@ Topology 3 tầng: **Next.js → FastAPI Gateway → LangGraph Agent Server**, s
 | **DB** | **Postgres** (board/task/spec/check/evidence + LangGraph checkpoint). ORM cho app data: SQLModel/SQLAlchemy. |
 | **Realtime** | **SSE** (LangGraph streaming protocol) + **Redis pub/sub** backplane ở Gateway: nhiều run/Builder/Checker publish event lên Redis channel, Gateway fan-out xuống client qua SSE. Lệnh (duyệt/gật/steer) đi **REST POST**, không nhét vào kênh SSE. |
 | **Ingress** | Reverse proxy (Nginx hoặc trực tiếp Cloudflare Tunnel) làm điểm vào duy nhất, route FE / Gateway / Agent Server. |
-| **Repo** | **Monorepo**: `/frontend` (Next.js) + `/backend` (FastAPI Gateway + LangGraph app, `langgraph.json`) + `/docs` + `/.specify`. |
-| **Deploy** | **Self-host tất cả trên một server** (Docker compose), expose qua **Cloudflare Tunnel**. Mọi service long-running, container-hóa. |
+| **Repo** | **Monorepo**: `/web` (Next.js) + `/backend` (FastAPI Gateway + LangGraph app, `langgraph.json`) + `/docs` + `/.specify`. |
+| **Deploy** | **Self-host tất cả trên một server** (Docker compose), expose qua **Cloudflare Tunnel** — **không publish host port**; chỉ `web`+`gateway` join network của tunnel (`t0lab_network`), còn lại nói chuyện qua **DNS nội bộ Docker**. Mọi service long-running, container-hóa. |
 | **Auth (provider)** | API-key cho mọi agent provider, chỉ ở backend/Agent Server. |
 
 ## Alternatives considered

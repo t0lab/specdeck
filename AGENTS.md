@@ -6,7 +6,7 @@
 
 UI/UX cho **vibe coding bất đồng bộ** (**SpecDeck** = spec + deck). Điều phối nhiều coding agent qua bảng Kanban 4 cột; con người duyệt ở tầng *Spec + Checklist + Evidence* thay vì đọc từng diff. Nhắm cả dev lẫn non-dev.
 
-**Status:** kiến trúc + stack đã chốt; **chưa có application code** (sắp scaffold).
+**Status:** kiến trúc + stack đã chốt; **skeleton đã scaffold** (web + backend gateway/agent/shared + docker-compose) — chưa có logic board/agent thật.
 
 ## Stack
 
@@ -44,4 +44,8 @@ Chi tiết: [ARCHITECTURE.md](ARCHITECTURE.md) · [ADR: stack](docs/design-docs/
 
 ## Key Files
 
-_Điền khi có code: entry points, config, module chính (frontend/, backend/gateway/, backend/agent/)._
+- [web/src/app/page.tsx](web/src/app/page.tsx) — FE hello: gateway health + SSE demo.
+- [backend/gateway/src/specdeck_gateway/main.py](backend/gateway/src/specdeck_gateway/main.py) — FastAPI: `/health`, `/api/stream` (SSE), `/api/agent/ping`.
+- [backend/agent/src/specdeck_agent/graph.py](backend/agent/src/specdeck_agent/graph.py) + [langgraph.json](backend/agent/langgraph.json) — Planner/Builder/Checker graphs.
+- [backend/shared/src/specdeck_shared/models.py](backend/shared/src/specdeck_shared/models.py) — Spec/Check/Evidence + AgentEvent contract.
+- [docker-compose.yml](docker-compose.yml) — postgres · redis · agent · gateway · web.
