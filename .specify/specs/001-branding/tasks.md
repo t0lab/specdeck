@@ -92,12 +92,12 @@ description: "Task list — 001-branding (Control room design system)"
 
 **Purpose**: cross-cutting; chạy theo thứ tự **deterministic trước** (R7), mỗi mục là Evidence.
 
-- [ ] T021 [P] **(1) Token-lint** quickstart V2: grep `web/src` không còn `#hex`/`oklch(`/`rgb(` ngoài `globals.css` + `src/fonts/`. *Done*: `PASS` rỗng (SC-002). Evidence.
-- [ ] T022 [P] **(2) Contrast AA** quickstart V4: đo các cặp text/nền + control ở **cả** dark và light (axe/script). *Done*: text ≥ 4.5:1, UI/large ≥ 3:1 (SC-004). Evidence.
-- [ ] T023 [P] **(3) Font self-host** quickstart V1: Network 0 request host font ngoài; dấu tiếng Việt (ă â đ ê ô ơ ư) render đủ. *Done*: SC-005. Evidence.
-- [ ] T024 [P] **(4) Grayscale + reduced-motion + focus-visible** quickstart V5/V7 toàn shell (cả 2 mode). *Done*: phân biệt cột/trạng thái không nhờ màu; focus ring nhìn thấy. Evidence.
-- [ ] T025 **(5) Build sạch** quickstart V8: `pnpm --dir web exec next build` (đọc web/AGENTS.md nếu cần). *Done*: build pass, 0 lỗi font/type.
-- [ ] T026 **(6) Tổng hợp**: chạy lại `pnpm --dir web test` (theme-toggle PASS) + đối chiếu full quickstart V1–V8; gom Evidence cho các Check tương ứng. *Done*: V1–V8 pass.
+- [X] T021 [P] **(1) Token-lint** quickstart V2: grep `web/src` không còn `#hex`/`oklch(`/`rgb(` ngoài `globals.css` + `src/fonts/`. *Done*: `PASS` rỗng (SC-002). Evidence.
+- [X] T022 [P] **(2) Contrast AA** quickstart V4: đo các cặp text/nền + control ở **cả** dark và light (axe/script). *Done*: text ≥ 4.5:1, UI/large ≥ 3:1 (SC-004). Evidence.
+- [X] T023 [P] **(3) Font self-host** quickstart V1: Network 0 request host font ngoài; dấu tiếng Việt (ă â đ ê ô ơ ư) render đủ. *Done*: SC-005. Evidence.
+- [X] T024 [P] **(4) Grayscale + reduced-motion + focus-visible** quickstart V5/V7 toàn shell (cả 2 mode). *Done*: phân biệt cột/trạng thái không nhờ màu; focus ring nhìn thấy. Evidence.
+- [X] T025 **(5) Build sạch** quickstart V8: `pnpm --dir web exec next build` (đọc web/AGENTS.md nếu cần). *Done*: build pass, 0 lỗi font/type.
+- [X] T026 **(6) Tổng hợp**: chạy lại `pnpm --dir web test` (theme-toggle PASS) + đối chiếu full quickstart V1–V8; gom Evidence cho các Check tương ứng. *Done*: V1–V8 pass.
 
 ---
 
