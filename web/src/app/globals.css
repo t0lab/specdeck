@@ -4,13 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* base-ui transition variants — base-ui sets [data-starting-style] on enter and
-   [data-ending-style] on exit. Without registering these, the Sheet/Dialog
-   enter/exit classes (opacity + translate) compile to nothing, so overlays just
-   pop in with no animation. */
-@custom-variant data-starting-style (&[data-starting-style]);
-@custom-variant data-ending-style (&[data-ending-style]);
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -149,7 +142,9 @@
   --col-backlog: var(--text-mute);
   --col-plan: var(--warn);
   --col-review: var(--running);
-  --col-done: var(--shipped); /* blue — was --good; Done must read apart from Review mint */
+  --col-done: var(
+    --shipped
+  ); /* blue — was --good; Done must read apart from Review mint */
   --check-pass: var(--good);
   --check-fail: var(--crit);
   --check-pending: var(--warn);
@@ -220,6 +215,10 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: var(--muted-foreground, initial);
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   }
   body {
     @apply bg-background text-foreground;
@@ -237,14 +236,7 @@
   }
 }
 
-/* Reduced motion — kill non-essential animation (FR-010 / C5) */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
+.hidden-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
