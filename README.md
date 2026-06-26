@@ -1,6 +1,9 @@
 <div align="center">
 
-# 🎛️ SpecDeck
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="web/public/brand/specdeck-horizontal.svg" />
+  <img alt="SpecDeck" src="web/public/brand/specdeck-horizontal-light.svg" width="340" />
+</picture>
 
 ### Control deck để điều phối nhiều coding agent bất đồng bộ
 
@@ -92,7 +95,7 @@ flowchart TD
 ## 📊 Trạng thái
 
 > [!WARNING]
-> **Concept / brainstorm.** Kiến trúc & stack đã chốt qua ADR. **Skeleton đã scaffold** — web (Next.js+shadcn) · gateway (FastAPI) · agent (LangGraph) · docker-compose (Postgres+Redis); `docker compose up --build` chạy được. Chưa có logic board/Planner/Builder/Checker thật.
+> **Concept → đang dựng UI.** Kiến trúc & stack đã chốt qua ADR; skeleton đã scaffold — web (Next.js+shadcn) · gateway (FastAPI) · agent (LangGraph) · docker-compose (Postgres+Redis), `docker compose up --build` chạy được. **Web frontend (mock-driven) đã dựng**: landing + board với hai dạng xem **Kanban / List**, **swimlane group** gập/mở, kéo-thả (qua cột & qua group), **search + filter**, và trang chi tiết Spec (Spec · Checks+Evidence · Diff) — toàn bộ chạy trên mock tĩnh, **chưa wire backend**. Chưa có logic Planner/Builder/Checker thật.
 
 ## 📚 Tài liệu
 
