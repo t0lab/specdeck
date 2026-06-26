@@ -24,7 +24,6 @@ import { useBoardSheet } from "@/components/board/spec-sheet";
 import { Badge } from "@/components/ui/badge";
 import { checkProgress } from "@/lib/check-progress";
 import type { BoardAction, GroupedBoardState } from "@/lib/board-state";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { cn } from "@/lib/utils";
 import type { BoardColumn, BoardGroup, SpecCard } from "@/mock/types";
 
@@ -66,12 +65,15 @@ function findCard(
 // running badges, and the same click-to-open-Sheet behaviour. A plain click
 // opens the Sheet; ⌘/Ctrl-click opens the full page.
 function SpecListRow({ card }: { card: SpecCard }) {
-  const { openSpec } = useBoardSheet();
+  const { openSpec, projectId } = useBoardSheet();
   const { passed, total } = checkProgress(card.checks);
+  const fullHref = projectId
+    ? `/p/${projectId}/board/${card.id}`
+    : `/board/${card.id}`;
 
   function handleClick(e: React.MouseEvent) {
     if (e.metaKey || e.ctrlKey) {
-      window.open(`/board/${card.id}`, "_blank", "noopener,noreferrer");
+      window.open(fullHref, "_blank", "noopener,noreferrer");
     } else {
       openSpec(card.id);
     }
@@ -121,6 +123,7 @@ function SpecListRow({ card }: { card: SpecCard }) {
       )}
       <OpenFullLink
         specId={card.id}
+        projectId={projectId}
         className="shrink-0 opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100"
         onClick={(e) => e.stopPropagation()}
       />
@@ -201,7 +204,6 @@ export function BoardList({
   "use no memo"; // dnd-kit + React Compiler loop — see BoardDnd for the why.
   const [activeId, setActiveId] = useState<string | null>(null);
   const beforeDrag = useRef<GroupedBoardState | null>(null);
-  const reducedMotion = useReducedMotion();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -308,9 +310,9 @@ export function BoardList({
         })}
       </div>
       {/* Lifted clone — same treatment as the Kanban overlay. */}
-      <DragOverlay dropAnimation={reducedMotion ? null : undefined}>
+      <DragOverlay>
         {activeCard ? (
-          <div className="w-[40rem] max-w-[85vw] -rotate-1 cursor-grabbing rounded-md bg-surface shadow-2xl shadow-primary/30 ring-2 ring-primary">
+          <div className="w-160 max-w-[85vw] -rotate-1 cursor-grabbing rounded-md bg-surface shadow-2xl shadow-primary/30 ring-2 ring-primary">
             <SpecListRow card={activeCard} />
           </div>
         ) : null}

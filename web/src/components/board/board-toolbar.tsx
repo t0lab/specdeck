@@ -96,7 +96,7 @@ export function BoardToolbar({
                 key={s.value}
                 checked={statuses.has(s.value)}
                 onCheckedChange={() => onToggleStatus(s.value)}
-                closeOnClick={false}
+                onSelect={(e) => e.preventDefault()}
                 className={"cursor-pointer"}
               >
                 {s.label}
@@ -111,7 +111,7 @@ export function BoardToolbar({
                 key={g.id}
                 checked={groupFilter.has(g.id)}
                 onCheckedChange={() => onToggleGroup(g.id)}
-                closeOnClick={false}
+                onSelect={(e) => e.preventDefault()}
                 className={"cursor-pointer"}
               >
                 {g.label}

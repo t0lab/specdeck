@@ -15,12 +15,16 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { SpecOverview } from "@/components/board/detail/spec-overview";
-import { getSpec } from "@/mock/specs";
+import { getSpecFor } from "@/mock/projects";
 
-type BoardSheetValue = { openSpec: (id: string) => void };
+// `projectId` scopes the peek + the deep-link base path so cards in different
+// Projects resolve and link to their own Specs. "" = no project context (e.g.
+// the non-interactive landing preview).
+type BoardSheetValue = { openSpec: (id: string) => void; projectId: string };
 
 const BoardSheetContext = createContext<BoardSheetValue>({
   openSpec: () => {},
+  projectId: "",
 });
 
 // Cards call this to peek a Spec. Default is a no-op so SpecCardView stays safe
@@ -37,13 +41,18 @@ export function useBoardSheet() {
 // remains the shareable deep-link / refresh surface.
 export function BoardSheetProvider({
   children,
+  projectId,
 }: {
   children: React.ReactNode;
+  projectId: string;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const openSpec = useCallback((id: string) => setOpenId(id), []);
-  const value = useMemo(() => ({ openSpec }), [openSpec]);
-  const spec = openId ? getSpec(openId) : undefined;
+  const value = useMemo(
+    () => ({ openSpec, projectId }),
+    [openSpec, projectId],
+  );
+  const spec = openId ? getSpecFor(projectId, openId) : undefined;
 
   return (
     <BoardSheetContext.Provider value={value}>
@@ -56,7 +65,7 @@ export function BoardSheetProvider({
       >
         <SheetContent
           side="right"
-          className="gap-0 data-[side=right]:w-full data-[side=right]:sm:w-2/5 data-[side=right]:sm:min-w-[28rem] data-[side=right]:sm:max-w-2xl"
+          className="gap-0 data-[side=right]:w-full data-[side=right]:sm:w-2/5 data-[side=right]:sm:min-w-md data-[side=right]:sm:max-w-2xl"
         >
           {spec ? (
             <>
@@ -67,7 +76,7 @@ export function BoardSheetProvider({
                 Spec overview: goal, Checks and Evidence.
               </SheetDescription>
               <div className="flex-1 overflow-y-auto px-6 pb-8 pt-12">
-                <SpecOverview spec={spec} />
+                <SpecOverview spec={spec} projectId={projectId} />
               </div>
             </>
           ) : null}

@@ -24,12 +24,15 @@ export function SpecCardView({
   className?: string;
   interactive?: boolean;
 }) {
-  const { openSpec } = useBoardSheet();
+  const { openSpec, projectId } = useBoardSheet();
   const { passed, total } = checkProgress(card.checks);
+  const fullHref = projectId
+    ? `/p/${projectId}/board/${card.id}`
+    : `/board/${card.id}`;
 
   function handleClick(e: React.MouseEvent) {
     if (e.metaKey || e.ctrlKey) {
-      window.open(`/board/${card.id}`, "_blank", "noopener,noreferrer");
+      window.open(fullHref, "_blank", "noopener,noreferrer");
     } else {
       openSpec(card.id);
     }
@@ -92,6 +95,7 @@ export function SpecCardView({
       {interactive && (
         <OpenFullLink
           specId={card.id}
+          projectId={projectId}
           className="opacity-0 transition-opacity group-hover/card:opacity-100 focus-visible:opacity-100"
           onClick={(e) => e.stopPropagation()}
         />

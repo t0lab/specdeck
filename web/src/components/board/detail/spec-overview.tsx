@@ -11,7 +11,13 @@ import type { SpecCard } from "@/mock/types";
 // (code/column/badges), goal, and the Checks + Evidence summary — enough to
 // triage without leaving the board. "Open full" jumps to the dedicated detail
 // page.
-export function SpecOverview({ spec }: { spec: SpecCard }) {
+export function SpecOverview({
+  spec,
+  projectId,
+}: {
+  spec: SpecCard;
+  projectId?: string;
+}) {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-3">
@@ -22,7 +28,7 @@ export function SpecOverview({ spec }: { spec: SpecCard }) {
             </span>
             <ColumnTag column={spec.column} />
           </div>
-          <OpenFullLink specId={spec.id} />
+          <OpenFullLink specId={spec.id} projectId={projectId} />
         </div>
         <h2 className="text-xl font-semibold tracking-tight">{spec.title}</h2>
         {(spec.fastlane || spec.runningAgent) && (

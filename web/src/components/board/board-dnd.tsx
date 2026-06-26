@@ -20,7 +20,6 @@ import { BoardGroupLane } from "@/components/board/board-group-lane";
 import { SpecCardView } from "@/components/board/spec-card-view";
 import { isCellId, parseCellId } from "@/components/board/board-ids";
 import type { BoardAction, GroupedBoardState } from "@/lib/board-state";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import type { BoardColumn, BoardGroup, SpecCard } from "@/mock/types";
 
 const COLUMNS: BoardColumn[] = ["backlog", "plan", "review", "done"];
@@ -102,7 +101,6 @@ export function BoardDnd({
   "use no memo";
   const [activeId, setActiveId] = useState<string | null>(null);
   const beforeDrag = useRef<GroupedBoardState | null>(null);
-  const reducedMotion = useReducedMotion();
 
   const sensors = useSensors(
     // Distance constraint: a stationary press is a click (US4 open), not a drag.
@@ -243,7 +241,7 @@ export function BoardDnd({
       </div>
       {/* Overlay: a lifted clone of the card follows the pointer/keyboard focus
           while dragging — distinct from the dimmed ghost left at the drop slot. */}
-      <DragOverlay dropAnimation={reducedMotion ? null : undefined}>
+      <DragOverlay>
         {activeCard ? (
           <SpecCardView
             card={activeCard}

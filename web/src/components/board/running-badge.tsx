@@ -2,8 +2,7 @@ import { cn } from "@/lib/utils";
 import type { AgentRole } from "@/mock/types";
 
 // "Agent running" badge (FR-004) — a pulsing dot + role label, shown on cards
-// and in the drawer. The dot is a distinct shape (not colour-only) and its
-// animation is stilled under prefers-reduced-motion (globals.css).
+// and in the drawer. The dot is a distinct shape (not colour-only).
 export function RunningBadge({
   role,
   className,
@@ -19,10 +18,10 @@ export function RunningBadge({
         className,
       )}
     >
-      <span className="relative grid size-2.5 place-items-center" aria-hidden>
-        <span className="absolute inline-flex size-2.5 animate-ping rounded-full bg-running opacity-60" />
-        <span className="relative size-1.5 rounded-full bg-running" />
-      </span>
+      <span
+        className="size-1.5 animate-pulse rounded-full bg-running"
+        aria-hidden
+      />
       {label}
     </span>
   );

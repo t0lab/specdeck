@@ -7,29 +7,25 @@ import { RunningBadge } from "@/components/board/running-badge";
 import { Badge } from "@/components/ui/badge";
 import { DetailTabs } from "@/components/board/detail/detail-tabs";
 import { defaultTab } from "@/lib/default-tab";
-import { getSpec, SPECS } from "@/mock/specs";
+import { getSpecFor } from "@/mock/projects";
 
-// Full detail page (US4) — the dual-surface counterpart to the drawer. Reached
-// by hard-nav / refresh / share of /board/[spec], or via "Open full". Same data
-// source as the drawer (getSpec), so the two surfaces never diverge.
-export function generateStaticParams() {
-  return SPECS.map((s) => ({ spec: s.id }));
-}
-
+// Full detail page (US4), scoped to a Project. Reached by hard-nav / refresh /
+// share of /p/[project]/board/[spec], or via "Open full". Resolves the Spec
+// within the Project's dataset so the same id in different Projects is distinct.
 export default async function SpecPage({
   params,
 }: {
-  params: Promise<{ spec: string }>;
+  params: Promise<{ project: string; spec: string }>;
 }) {
-  const { spec: id } = await params;
-  const spec = getSpec(id);
+  const { project, spec: id } = await params;
+  const spec = getSpecFor(project, id);
   if (!spec) notFound();
 
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-8">
       <div className="flex flex-col gap-6">
         <Link
-          href="/board"
+          href={`/p/${project}/board`}
           className="inline-flex w-fit items-center gap-1.5 text-sm text-mute transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" aria-hidden />

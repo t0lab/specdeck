@@ -39,14 +39,14 @@ export function BoardColumnHeader({
               <span className="text-xs font-semibold uppercase tracking-wider text-dim">
                 {meta.label}
               </span>
-              <span className="ml-auto rounded-full bg-foreground/10 px-1.5 py-0.5 text-[11px] font-medium text-mute tabular-nums">
+              {/* h-[18px] min-w-[18px] = a clean circle for one digit, grows to a
+                  soft pill for 2+; lighter fill than before so it reads as a quiet
+                  count, not a heavy badge. */}
+              <span className="ml-auto inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-foreground/6 px-1 text-[10px] font-semibold leading-none text-mute tabular-nums">
                 {counts[column]}
               </span>
             </div>
-            <div
-              className={cn("h-0.75 rounded-full", meta.rule)}
-              aria-hidden
-            />
+            <div className={cn("h-0.75 rounded-full", meta.rule)} aria-hidden />
           </div>
         );
       })}

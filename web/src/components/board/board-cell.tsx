@@ -19,8 +19,14 @@ import type { BoardColumn, SpecCard } from "@/mock/types";
 // KeyboardSensor wired on the context.
 function SortableSpecCard({ card }: { card: SpecCard }) {
   "use no memo"; // dnd-kit + React Compiler loop — see BoardDnd for the why.
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: card.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: card.id });
   return (
     <div
       ref={setNodeRef}
@@ -69,7 +75,7 @@ export function BoardCell({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex min-h-24 flex-col gap-4 rounded-lg p-2 ring-1 ring-inset ring-transparent transition-colors",
+        "flex min-h-24 flex-col gap-4.5 rounded-lg p-2 ring-1 ring-inset ring-transparent transition-colors",
         (isTarget || isOver) && "bg-accent-soft/60 ring-primary/40",
       )}
     >
