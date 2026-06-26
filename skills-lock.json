@@ -146,7 +146,7 @@
       "computedHash": "6e80a0d766c438fb8e3a17ed41dbe4394ab0e25c99b58752a7361ca72fa55153"
     },
     "stitch-design-taste": {
-      "source": "Leonxlnx/taste-skill",
+      "source": "leonxlnx/taste-skill",
       "sourceType": "github",
       "skillPath": "skills/stitch-skill/SKILL.md",
       "computedHash": "13322f38406cd3abf16ba45e35bdc9b18002d0153a79b4612b97aefc65d5a335"
