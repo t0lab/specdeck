@@ -95,7 +95,7 @@ flowchart TD
 ## 📊 Trạng thái
 
 > [!WARNING]
-> **Concept → đang dựng UI.** Kiến trúc & stack đã chốt qua ADR; skeleton đã scaffold — web (Next.js+shadcn) · gateway (FastAPI) · agent (LangGraph) · docker-compose (Postgres+Redis), `docker compose up --build` chạy được. **Web frontend (mock-driven) đã dựng**: landing + board với hai dạng xem **Kanban / List**, **swimlane group** gập/mở, kéo-thả (qua cột & qua group), **search + filter**, và trang chi tiết Spec (Spec · Checks+Evidence · Diff) — toàn bộ chạy trên mock tĩnh, **chưa wire backend**. Chưa có logic Planner/Builder/Checker thật.
+> **Concept → đang dựng UI.** Kiến trúc & stack đã chốt qua ADR; skeleton đã scaffold — web (Next.js+shadcn) · gateway (FastAPI) · agent (LangGraph) · docker-compose (Postgres+Redis), `docker compose up --build` chạy được. **Web frontend (mock-driven) đã dựng**: landing + **workspace nhiều Project** (sidebar trái kiểu Notion/vibe-kanban, mỗi Project có tab **Overview · Board · Settings** + Project Context); board với hai dạng xem **Kanban / List**, **swimlane group** gập/mở, kéo-thả (qua cột & qua group), **search + filter**, và trang chi tiết Spec (Spec · Checks+Evidence · Diff) — toàn bộ chạy trên mock tĩnh, **chưa wire backend**. Chưa có logic Planner/Builder/Checker thật.
 
 ## 📚 Tài liệu
 
