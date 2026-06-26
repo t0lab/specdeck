@@ -34,6 +34,17 @@ export const LANDING_SPECS: SpecCard[] = [
     tasks: [],
     checks: [],
   },
+  {
+    id: "SPEC-107",
+    column: "backlog",
+    title: "Speed up the dashboard load",
+    goal: "Make the dashboard open in under a second.",
+    userStories: [],
+    requirements: [],
+    successCriteria: [],
+    tasks: [],
+    checks: [],
+  },
 
   // ── Plan: an agent is drafting the Spec ───────────────────────────────────
   {
@@ -48,6 +59,17 @@ export const LANDING_SPECS: SpecCard[] = [
     tasks: [],
     checks: [],
   },
+  {
+    id: "SPEC-108",
+    column: "plan",
+    title: "Bulk-edit the contacts list",
+    goal: "Let people select many contacts and edit them at once.",
+    userStories: [],
+    requirements: [],
+    successCriteria: [],
+    tasks: [],
+    checks: [],
+  },
 
   // ── Review: finished work, waiting for your approval ──────────────────────
   // The rich example used by the evidence panel: two real green checks, one
@@ -55,8 +77,8 @@ export const LANDING_SPECS: SpecCard[] = [
   {
     id: "SPEC-104",
     column: "review",
-    title: "Add “Sign in with Google”",
-    goal: "Let people sign in with their Google account instead of a password.",
+    title: "Let customers check out with a saved card",
+    goal: "Let people pay with a card they have already saved, in one step.",
     userStories: [],
     requirements: [],
     successCriteria: [],
@@ -64,28 +86,28 @@ export const LANDING_SPECS: SpecCard[] = [
     checks: [
       {
         id: "CHK-1",
-        label: "Signing in with Google works, start to finish",
+        label: "The amount charged matches the cart",
         state: "pass",
-        kind: "evidence",
-        evidence: { type: "video", summary: "screen recording of a full sign-in", href: "#" },
+        kind: "deterministic",
+        evidence: { type: "test", summary: "12 amount-matching tests pass", href: "#" },
       },
       {
         id: "CHK-2",
-        label: "Passwords are never written to the logs",
+        label: "A customer completes a purchase, start to finish",
         state: "pass",
-        kind: "deterministic",
-        evidence: { type: "test", summary: "log-scrub test passes", href: "#" },
+        kind: "evidence",
+        evidence: { type: "video", summary: "screen recording of a full checkout", href: "#" },
       },
       {
         // pass WITHOUT evidence → the panel keeps it not-green on purpose
         id: "CHK-3",
-        label: "Looks right on a phone",
+        label: "The receipt shows the right total",
         state: "pass",
         kind: "evidence",
       },
       {
         id: "CHK-4",
-        label: "The error message is friendly when sign-in fails",
+        label: "The decline message is clear and helpful",
         state: "pending",
         kind: "judge",
       },
@@ -115,6 +137,34 @@ export const LANDING_SPECS: SpecCard[] = [
         state: "pass",
         kind: "deterministic",
         evidence: { type: "log", summary: "build is green", href: "#" },
+      },
+    ],
+  },
+  {
+    // a review that is NOT all-green — a failing Check reads red, so the demo
+    // board shows real variety (not every card is a happy path).
+    id: "SPEC-109",
+    column: "review",
+    title: "Fix the broken avatar upload",
+    goal: "Uploading a profile photo should just work.",
+    userStories: [],
+    requirements: [],
+    successCriteria: [],
+    tasks: [],
+    checks: [
+      {
+        id: "CHK-1",
+        label: "Uploading a JPG or PNG works",
+        state: "pass",
+        kind: "evidence",
+        evidence: { type: "image", summary: "before / after avatar", href: "#" },
+      },
+      {
+        id: "CHK-2",
+        label: "Oversized files are rejected with a clear message",
+        state: "fail",
+        kind: "deterministic",
+        evidence: { type: "log", summary: "rejection test failing", href: "#" },
       },
     ],
   },
@@ -150,6 +200,32 @@ export const LANDING_SPECS: SpecCard[] = [
         state: "pass",
         kind: "evidence",
         evidence: { type: "image", summary: "rendered in both clients", href: "#" },
+      },
+    ],
+  },
+  {
+    id: "SPEC-110",
+    column: "done",
+    title: "Add two-factor authentication",
+    goal: "Let people protect their account with a second factor.",
+    userStories: [],
+    requirements: [],
+    successCriteria: [],
+    tasks: [],
+    checks: [
+      {
+        id: "CHK-1",
+        label: "Signing in asks for the second factor",
+        state: "pass",
+        kind: "evidence",
+        evidence: { type: "video", summary: "full 2FA sign-in", href: "#" },
+      },
+      {
+        id: "CHK-2",
+        label: "Backup codes are generated and valid",
+        state: "pass",
+        kind: "deterministic",
+        evidence: { type: "test", summary: "backup-code tests pass", href: "#" },
       },
     ],
   },
