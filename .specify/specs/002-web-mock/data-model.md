@@ -20,6 +20,7 @@ Mock-only: đây là hình dạng **dữ liệu tĩnh trong `web/src/mock/`**, k
 |---|---|---|
 | `id` | `string` | mã Spec hiển thị (vd `SPEC-014`); **ổn định**, làm route param `/board/[spec]` |
 | `column` | `BoardColumn` | cột hiện tại |
+| `group?` | `string` | id swimlane (xem `BoardGroup`); board cards luôn set, landing cards bỏ trống *(thêm ở R19)* |
 | `title` | `string` | tiêu đề |
 | `fastlane?` | `boolean` | true → badge Fast lane, **phải** ở `review` (FR-005) |
 | `runningAgent?` | `AgentRole` | có → badge ⏳ "đang chạy" (FR-004) |
@@ -32,6 +33,9 @@ Mock-only: đây là hình dạng **dữ liệu tĩnh trong `web/src/mock/`**, k
 | `tasks` | `Task[]` | mirror tasks.md |
 | `checks` | `Check[]` | có thể rỗng (Backlog) |
 | `diff?` | `DiffFile[]` | vắng → tab Diff empty state (FR-026) |
+
+### BoardGroup *(swimlane — thêm ở R19)*
+`id: string`, `label: string`. Các card cùng `group` được gom vào một băng ngang (swimlane) gập/mở được, cắt qua cả 4 cột. Registry `BOARD_GROUPS` ở `mock/specs.ts`.
 
 ### UserStory
 `id` (`US1`…), `title`, `priority: Priority`, `narrative: string`, `whyPriority?: string`, `scenarios: Scenario[]`
@@ -71,7 +75,9 @@ total     = checks.length
 
 ## Ràng buộc bộ dữ liệu mock (FR-007)
 
-`mock/specs.ts` phải chứa **~6–8 SpecCard** thoả:
+> **Cập nhật R20:** `mock/specs.ts` nay gồm `RICH_SPECS` (7 card chi tiết thoả mọi ràng buộc dưới) **+** `FILLER_SPECS` (~20 card nhẹ) → ~27 card, đủ volume để cuộn board. Các ràng buộc FR-007 do nhóm RICH bảo đảm.
+
+`RICH_SPECS` phải thoả:
 1. Phủ đủ 4 cột Backlog/Plan/Review/Done.
 2. ≥1 card `fastlane: true` và nằm ở `review`.
 3. ≥1 card có `runningAgent`.
@@ -84,3 +90,5 @@ total     = checks.length
 ## State runtime (không persist)
 
 Board giữ thứ tự/cột trong **một** cấu trúc in-memory seed từ `mock/specs.ts`, biến đổi qua `lib/board-state.ts` (reducer thuần). Reload → seed lại từ mock (FR-010). Không có entity nào ghi xuống storage.
+
+> **Cập nhật R19–R23 (board nhóm + 2 dạng xem):** state nay là `GroupedBoardState = GroupLane[]`, mỗi lane = `{ groupId, cells: Record<BoardColumn, SpecCard[]> }` (cell = group × column) — index cục bộ theo từng cell. `moveCard(state, cardId, toGroup, toColumn, toIndex)` lo cả reorder/đổi-cột/đổi-group; `boardReducer` + `filterBoard(state, {query, statuses, groups})` cùng ở `lib/board-state.ts` (thuần, có test). State + collapse + filter nâng lên `components/board/board-view.tsx`; hai dạng xem **Kanban** (`board-dnd`, kéo qua cột + qua group) và **List** (`board-list`, kéo chỉ đổi group) chia sẻ cùng state nên đồng bộ; chuyển dạng bằng `ui/tabs`.

@@ -82,10 +82,18 @@ export interface DiffFile {
   patch: string; // unified-diff text (mock)
 }
 
+// A board group (swimlane). Cards sharing a `group` id are gathered into one
+// collapsible horizontal band that cuts across all four columns.
+export interface BoardGroup {
+  id: string;
+  label: string;
+}
+
 // Root entity — one card on the board, mirroring one feature folder.
 export interface SpecCard {
   id: string; // display code, e.g. "SPEC-014" — stable; route param /board/[spec]
   column: BoardColumn;
+  group?: string; // board group (swimlane) id; landing cards leave this unset
   title: string;
   fastlane?: boolean; // → Fast lane badge; MUST sit in `review` (FR-005)
   runningAgent?: AgentRole; // → ⏳ "running" badge (FR-004)

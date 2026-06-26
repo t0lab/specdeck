@@ -1,4 +1,13 @@
-import type { BoardColumn, BoardColumnLane, SpecCard } from "@/mock/types";
+import type {
+  AgentRole,
+  BoardGroup,
+  BoardColumn,
+  Check,
+  CheckKind,
+  EvidenceType,
+  SpecCard,
+} from "@/mock/types";
+import type { ColumnCells, GroupedBoardState } from "@/lib/board-state";
 
 // Static mock dataset. SpecDeck dogfoods itself: each card is a SpecDeck
 // feature folder, spread across the four columns. This is the single source of
@@ -13,12 +22,19 @@ import type { BoardColumn, BoardColumnLane, SpecCard } from "@/mock/types";
 //     (SPEC-016 — demonstrates "missing Evidence = not passed");
 //  5. ≥1 Backlog card with no Checks and no diff (SPEC-021);
 //  6. ≥1 deep card (many US/FR/SC + prose + Mermaid) (SPEC-014).
+//
+// Each card also carries a `group` id — the swimlane it belongs to. Groups
+// gather a card's work across all four columns into one collapsible band
+// (GitHub-Projects-style "group by"). See BOARD_GROUPS / initialBoard below.
 
-export const SPECS: SpecCard[] = [
+// The seven richly-detailed Specs (full US/FR/SC/tasks/checks/diff) that the
+// detail page, drawer, and distribution constraints (FR-007) all rely on.
+const RICH_SPECS: SpecCard[] = [
   // ── Backlog ──────────────────────────────────────────────────────────────
   {
     id: "SPEC-021",
     column: "backlog",
+    group: "deck-ux",
     title: "Keyboard-first command palette",
     goal: "Give power users a `⌘K` palette to jump to any Spec, column, or action without leaving the keyboard. Not yet planned — sitting in Backlog awaiting prioritisation.",
     userStories: [
@@ -58,6 +74,7 @@ export const SPECS: SpecCard[] = [
   {
     id: "SPEC-014",
     column: "plan",
+    group: "review-evidence",
     title: "Async review pipeline",
     goal: [
       "Coordinate Planner → Builder → Checker so a human reviews at the **spec/checklist** layer instead of reading diffs. Each Check that passes MUST carry Evidence; a pass without Evidence is treated as *not passed*.",
@@ -162,6 +179,7 @@ export const SPECS: SpecCard[] = [
   {
     id: "SPEC-022",
     column: "plan",
+    group: "review-evidence",
     title: "Evidence gallery",
     goal: "A per-Spec gallery that collects every Evidence artifact (screenshots, videos, logs, test reports) so a reviewer can scan proof in one place.",
     userStories: [
@@ -218,6 +236,7 @@ export const SPECS: SpecCard[] = [
   {
     id: "SPEC-009",
     column: "review",
+    group: "deck-ux",
     title: "Fix board column drag offset",
     fastlane: true,
     goal: "Cards dropped near a column edge snapped to the wrong index. A small, mechanical fix — routed through the **Fast lane** (spec abbreviated, change is obvious).",
@@ -269,6 +288,7 @@ export const SPECS: SpecCard[] = [
   {
     id: "SPEC-016",
     column: "review",
+    group: "deck-ux",
     title: "SSE board live updates",
     goal: "Push board changes to every viewer over Server-Sent Events so the deck stays live without refresh. **Currently in Review with a failing Check and an unevidenced pass** — not approvable yet.",
     userStories: [
@@ -354,6 +374,7 @@ export const SPECS: SpecCard[] = [
   {
     id: "SPEC-018",
     column: "review",
+    group: "review-evidence",
     title: "Spec diff Monaco viewer",
     runningAgent: "checker",
     goal: "Render a Spec's diff read-only in a Monaco viewer. The **Checker is currently running** its verification pass on this card (⏳).",
@@ -424,6 +445,7 @@ export const SPECS: SpecCard[] = [
   {
     id: "SPEC-007",
     column: "done",
+    group: "platform",
     title: "Brand identity + theming",
     goal: "Establish the SpecDeck mark, colour tokens, and dark/light theming with no flash. Shipped — every Check passed with Evidence and the Spec is frozen.",
     userStories: [
@@ -491,17 +513,179 @@ export const SPECS: SpecCard[] = [
   },
 ];
 
+// ── Filler Specs ─────────────────────────────────────────────────────────────
+// ~20 lighter Specs (title + goal, some with Checks) so the board has real
+// volume across every group × column — enough to scroll the swimlanes under the
+// sticky column header. They intentionally leave the deep spec-detail fields
+// empty (the detail page still renders, just sparsely).
+type FillerOpts = {
+  checks?: Check[];
+  fastlane?: boolean;
+  runningAgent?: AgentRole;
+};
+
+function mk(
+  id: string,
+  column: BoardColumn,
+  group: string,
+  title: string,
+  goal: string,
+  opts: FillerOpts = {},
+): SpecCard {
+  return {
+    id,
+    column,
+    group,
+    title,
+    goal,
+    userStories: [],
+    requirements: [],
+    successCriteria: [],
+    tasks: [],
+    checks: opts.checks ?? [],
+    ...(opts.fastlane ? { fastlane: true } : {}),
+    ...(opts.runningAgent ? { runningAgent: opts.runningAgent } : {}),
+  };
+}
+
+// Tiny Check builders for the filler cards.
+const ev = (
+  id: string,
+  label: string,
+  kind: CheckKind,
+  type: EvidenceType,
+  summary: string,
+): Check => ({ id, label, state: "pass", kind, evidence: { type, summary, href: "#" } });
+const pend = (id: string, label: string, kind: CheckKind): Check => ({
+  id,
+  label,
+  state: "pending",
+  kind,
+});
+const run = (id: string, label: string, kind: CheckKind): Check => ({
+  id,
+  label,
+  state: "running",
+  kind,
+});
+const fl = (
+  id: string,
+  label: string,
+  kind: CheckKind,
+  type: EvidenceType,
+  summary: string,
+): Check => ({ id, label, state: "fail", kind, evidence: { type, summary, href: "#" } });
+
+const FILLER_SPECS: SpecCard[] = [
+  // ── Group: Spec review & evidence ──────────────────────────────────────────
+  mk("SPEC-030", "backlog", "review-evidence", "Diff-aware Check suggestions", "Suggest likely Checks for a Spec from the shape of its diff."),
+  mk("SPEC-031", "backlog", "review-evidence", "Spec lint rules", "Flag vague acceptance and missing success criteria before planning."),
+  mk("SPEC-032", "plan", "review-evidence", "Held-out test harness", "Run Checks the Builder never saw, on a clean checkout."),
+  mk("SPEC-033", "plan", "review-evidence", "Judge rubric editor", "Let maintainers tune the LLM-judge rubric per Check kind."),
+  mk("SPEC-034", "review", "review-evidence", "Evidence freshness checker", "Warn when an Evidence link is older than its Check's last run.", {
+    checks: [
+      ev("CHK-1", "Stale-evidence detector unit tests", "deterministic", "test", "9 tests pass"),
+      ev("CHK-2", "Flags a backdated artifact", "evidence", "log", "stale link caught"),
+    ],
+  }),
+  mk("SPEC-035", "review", "review-evidence", "Checker disagreement surfacing", "Show Builder/Checker conflicts as a banner on the card.", {
+    checks: [
+      ev("CHK-1", "Conflict reducer tests", "deterministic", "test", "6 tests pass"),
+      pend("CHK-2", "Reviewer judges the conflict copy", "judge"),
+    ],
+  }),
+  mk("SPEC-036", "done", "review-evidence", "Deterministic check runner", "Run test/build/lint first and short-circuit on failure.", {
+    checks: [
+      ev("CHK-1", "Runner exits non-zero on first failure", "deterministic", "test", "exit-code tests pass"),
+      ev("CHK-2", "Ordering: deterministic before judge", "deterministic", "log", "order verified"),
+    ],
+  }),
+  mk("SPEC-037", "done", "review-evidence", "Evidence link validator", "Reject a Check whose Evidence URL 404s.", {
+    checks: [
+      ev("CHK-1", "Dead-link rejection tests", "deterministic", "test", "11 tests pass"),
+      ev("CHK-2", "Live crawl of sample artifacts", "evidence", "log", "all 200"),
+    ],
+  }),
+
+  // ── Group: Board & deck UX ──────────────────────────────────────────────────
+  mk("SPEC-038", "backlog", "deck-ux", "Saved board filters", "Save a filter (column, group, agent) and recall it in one click."),
+  mk("SPEC-039", "backlog", "deck-ux", "Per-user column presets", "Remember which columns each reviewer wants visible."),
+  mk("SPEC-040", "plan", "deck-ux", "Group-by any field", "Let the board swimlane by group, owner, or priority on demand."),
+  mk("SPEC-041", "plan", "deck-ux", "Drag multi-select", "Shift-click to drag several cards across columns at once."),
+  mk("SPEC-042", "review", "deck-ux", "Card hover quick-actions", "Approve, reject, or open full from a card without clicking in.", {
+    checks: [
+      ev("CHK-1", "Quick-action keyboard paths", "evidence", "video", "all actions reachable"),
+      fl("CHK-2", "Hover menu unreachable on touch", "deterministic", "log", "no long-press handler"),
+    ],
+  }),
+  mk("SPEC-043", "done", "deck-ux", "Sticky column headers", "Keep the column header pinned while the swimlanes scroll.", {
+    checks: [
+      ev("CHK-1", "Header stays pinned on scroll", "evidence", "video", "pinned through 30 rows"),
+      ev("CHK-2", "No layout shift on stick", "deterministic", "test", "CLS tests pass"),
+    ],
+  }),
+  mk("SPEC-044", "done", "deck-ux", "Keyboard card navigation", "Move focus between cards and columns with the arrow keys.", {
+    checks: [
+      ev("CHK-1", "Arrow-key roving tabindex", "deterministic", "test", "14 tests pass"),
+      ev("CHK-2", "Screen-reader announces column", "evidence", "html", "NVDA transcript clean"),
+    ],
+  }),
+
+  // ── Group: Platform & brand ─────────────────────────────────────────────────
+  mk("SPEC-045", "backlog", "platform", "Audit log export", "Export a signed CSV of every card move and approval."),
+  mk("SPEC-046", "plan", "platform", "Postgres checkpointer tuning", "Right-size the LangGraph async checkpointer pool for self-host."),
+  mk("SPEC-047", "review", "platform", "Cloudflare Tunnel health probe", "Surface tunnel up/down on the deck so self-hosters notice drops.", {
+    runningAgent: "checker",
+    checks: [
+      ev("CHK-1", "Probe reports down within 5s", "deterministic", "test", "timeout tests pass"),
+      run("CHK-2", "Checker reviews alert copy", "judge"),
+    ],
+  }),
+  mk("SPEC-048", "done", "platform", "Redis pub/sub fan-out", "Fan board events to every viewer through Redis pub/sub.", {
+    checks: [
+      ev("CHK-1", "Fan-out delivers to N subscribers", "deterministic", "test", "load test green"),
+      ev("CHK-2", "No event lost under churn", "held-out", "log", "0 dropped in soak"),
+    ],
+  }),
+  mk("SPEC-049", "done", "platform", "Container isolation per Builder", "Give each Builder its own container so parallel cards can't collide.", {
+    checks: [
+      ev("CHK-1", "Port/DB collision guard", "deterministic", "test", "isolation tests pass"),
+      ev("CHK-2", "Two Builders run side by side", "evidence", "video", "no cross-talk"),
+    ],
+  }),
+];
+
+// One board dataset = the rich Specs followed by the filler volume.
+export const SPECS: SpecCard[] = [...RICH_SPECS, ...FILLER_SPECS];
+
 const COLUMN_ORDER: BoardColumn[] = ["backlog", "plan", "review", "done"];
+
+// Swimlanes, in display order. Each band gathers a card's work across all four
+// columns; a band may be empty in some columns (e.g. Platform only has Done).
+export const BOARD_GROUPS: BoardGroup[] = [
+  { id: "review-evidence", label: "Spec review & evidence" },
+  { id: "deck-ux", label: "Board & deck UX" },
+  { id: "platform", label: "Platform & brand" },
+];
 
 export function getSpec(id: string): SpecCard | undefined {
   return SPECS.find((s) => s.id === id);
 }
 
-// Seed for the in-memory board: cards grouped by column in display order.
-// Reload re-derives from SPECS (no persistence — FR-010).
-export function initialBoard(): BoardColumnLane[] {
-  return COLUMN_ORDER.map((column) => ({
-    column,
-    cards: SPECS.filter((s) => s.column === column),
-  }));
+function emptyCells(): ColumnCells {
+  return { backlog: [], plan: [], review: [], done: [] };
+}
+
+// Seed for the in-memory board: one lane per group, each holding cards split by
+// column in display order. Reload re-derives from SPECS (no persistence — FR-010).
+export function initialBoard(): GroupedBoardState {
+  return BOARD_GROUPS.map((group) => {
+    const cells = emptyCells();
+    for (const column of COLUMN_ORDER) {
+      cells[column] = SPECS.filter(
+        (s) => s.group === group.id && s.column === column,
+      );
+    }
+    return { groupId: group.id, cells };
+  });
 }

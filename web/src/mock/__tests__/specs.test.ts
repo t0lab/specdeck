@@ -1,20 +1,27 @@
 import { describe, it, expect } from "vitest";
 
-import { SPECS, getSpec, initialBoard } from "@/mock/specs";
+import { BOARD_GROUPS, SPECS, getSpec, initialBoard } from "@/mock/specs";
 import type { BoardColumn } from "@/mock/types";
 
+const COLUMNS: BoardColumn[] = ["backlog", "plan", "review", "done"];
+
 describe("mock dataset (FR-007 distribution)", () => {
-  it("contains 6–8 SpecCards with unique, stable ids", () => {
-    expect(SPECS.length).toBeGreaterThanOrEqual(6);
-    expect(SPECS.length).toBeLessThanOrEqual(8);
+  it("contains enough SpecCards (volume to scroll) with unique, stable ids", () => {
+    expect(SPECS.length).toBeGreaterThanOrEqual(20);
     const ids = SPECS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
   it("covers all four columns", () => {
     const cols = new Set(SPECS.map((s) => s.column));
-    (["backlog", "plan", "review", "done"] as BoardColumn[]).forEach((c) =>
-      expect(cols.has(c)).toBe(true),
+    COLUMNS.forEach((c) => expect(cols.has(c)).toBe(true));
+  });
+
+  it("assigns every card to a known group, and every group has ≥1 card", () => {
+    const groupIds = new Set(BOARD_GROUPS.map((g) => g.id));
+    SPECS.forEach((s) => expect(groupIds.has(s.group!)).toBe(true));
+    BOARD_GROUPS.forEach((g) =>
+      expect(SPECS.some((s) => s.group === g.id)).toBe(true),
     );
   });
 
@@ -61,18 +68,24 @@ describe("mock dataset (FR-007 distribution)", () => {
     expect(getSpec("SPEC-DOES-NOT-EXIST")).toBeUndefined();
   });
 
-  it("initialBoard returns lanes in column order, partitioning every card", () => {
+  it("initialBoard returns one lane per group (in order), partitioning every card by group × column", () => {
     const board = initialBoard();
-    expect(board.map((l) => l.column)).toEqual([
-      "backlog",
-      "plan",
-      "review",
-      "done",
-    ]);
-    const total = board.reduce((n, l) => n + l.cards.length, 0);
+    expect(board.map((l) => l.groupId)).toEqual(BOARD_GROUPS.map((g) => g.id));
+
+    const total = board.reduce(
+      (n, l) => n + COLUMNS.reduce((m, c) => m + l.cells[c].length, 0),
+      0,
+    );
     expect(total).toBe(SPECS.length);
+
+    // Every card sits in the cell matching its own group and column.
     board.forEach((lane) =>
-      lane.cards.forEach((card) => expect(card.column).toBe(lane.column)),
+      COLUMNS.forEach((column) =>
+        lane.cells[column].forEach((card) => {
+          expect(card.group).toBe(lane.groupId);
+          expect(card.column).toBe(column);
+        }),
+      ),
     );
   });
 });

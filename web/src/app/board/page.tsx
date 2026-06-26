@@ -1,15 +1,21 @@
-import { BoardDnd } from "@/components/board/board-dnd";
+import { BoardView } from "@/components/board/board-view";
 import { BoardSheetProvider } from "@/components/board/spec-sheet";
-import { initialBoard } from "@/mock/specs";
+import { BOARD_GROUPS, initialBoard } from "@/mock/specs";
+
+const COLUMNS = ["backlog", "plan", "review", "done"] as const;
 
 // Board (US2 + US3 + US4). The app bar lives in the board layout; this page
 // renders a page header + the interactive board grid (drag-drop, in-memory state)
-// seeded from the mock. BoardSheetProvider supplies the in-page Spec peek (a card
-// click opens a Sheet, no route change). `flex-1` lets the board fill the
+// seeded from the mock. Cards are gathered into collapsible group swimlanes that
+// cut across all four columns. BoardSheetProvider supplies the in-page Spec peek
+// (a card click opens a Sheet, no route change). `flex-1` lets the board fill the
 // min-h-svh layout even when the lanes are short.
 export default function BoardPage() {
   const lanes = initialBoard();
-  const total = lanes.reduce((n, lane) => n + lane.cards.length, 0);
+  const total = lanes.reduce(
+    (n, lane) => n + COLUMNS.reduce((m, c) => m + lane.cells[c].length, 0),
+    0,
+  );
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-8">
@@ -26,7 +32,7 @@ export default function BoardPage() {
         </span>
       </div>
       <BoardSheetProvider>
-        <BoardDnd initialLanes={lanes} />
+        <BoardView initialLanes={lanes} groups={BOARD_GROUPS} />
       </BoardSheetProvider>
     </main>
   );
