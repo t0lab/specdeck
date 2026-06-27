@@ -273,7 +273,7 @@ export function BoardList({
       onDragEnd={onDragEnd}
       onDragCancel={onDragCancel}
     >
-      <div className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-3">
         {state.map((lane) => {
           const cards = COLUMNS.flatMap((column) => lane.cells[column]);
           const isCollapsed = collapsed.has(lane.groupId);

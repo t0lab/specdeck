@@ -76,7 +76,7 @@ export function BoardToolbar({
       <DropdownMenu>
         <DropdownMenuTrigger
           className={cn(
-            "inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-surface px-3 text-sm font-medium transition-colors hover:bg-surface-2",
+            "inline-flex h-9 items-center gap-1.5 cursor-pointer rounded-md border border-border bg-surface px-3 text-sm font-medium transition-colors hover:bg-surface-2",
             activeCount > 0 && "border-primary/50 text-primary",
           )}
         >
