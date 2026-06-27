@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircleHelp, SquarePlus } from "lucide-react";
@@ -21,7 +20,6 @@ import { ProjectAvatar } from "./project-avatar";
 import { NavNotifications } from "./nav-notifications";
 import { NavSettings } from "./nav-settings";
 import { NavUser } from "./nav-user";
-import { NewProjectDialog } from "./new-project-dialog";
 import { useProjects } from "./workspace-context";
 
 // Mock signed-in user — no auth yet (002/003 are mock-only). Empty avatar falls
@@ -45,7 +43,6 @@ const NAV_ITEM_CLASS =
 export function AppSidebar() {
   const projects = useProjects();
   const pathname = usePathname();
-  const [newOpen, setNewOpen] = useState(false);
 
   return (
     <Sidebar collapsible="icon">
@@ -92,13 +89,16 @@ export function AppSidebar() {
             })}
             <SidebarMenuItem>
               <SidebarMenuButton
+                asChild
+                isActive={pathname === "/new"}
                 tooltip="New project"
-                onClick={() => setNewOpen(true)}
                 size="lg"
                 className={NAV_ITEM_CLASS}
               >
-                <SquarePlus className="size-6!" />
-                <span>New project</span>
+                <Link href="/new">
+                  <SquarePlus className="size-6!" />
+                  <span>New project</span>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -127,7 +127,6 @@ export function AppSidebar() {
       </SidebarFooter>
 
       {/* <SidebarRail /> */}
-      <NewProjectDialog open={newOpen} onOpenChange={setNewOpen} />
     </Sidebar>
   );
 }
