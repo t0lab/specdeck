@@ -26,5 +26,6 @@ Chi tiết: [ADR: stack](docs/design-docs/stack.md) · [ADR: agent-architecture]
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
+shell commands, and other important information, read the current plan:
+`.specify/specs/004-github-workspace/plan.md` (Workspace provisioning + GitHub OAuth).
 <!-- SPECKIT END -->
