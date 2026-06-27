@@ -30,11 +30,11 @@ description: "Task list for Workspace Provisioning + GitHub OAuth"
 
 **Purpose**: Khai báo dependency + volume + env, dựng khung persistence chưa có ở gateway.
 
-- [ ] T001 Thêm runtime deps vào `backend/gateway/pyproject.toml`: `sqlalchemy[asyncio]>=2.0`, `asyncpg`, `alembic`, `cryptography`; và dev deps `pytest`, `pytest-asyncio`, `respx` (theo research.md "Dependencies thêm")
-- [ ] T002 [P] Thêm named volume `workspaces` (mount rw vào service `gateway` và `agent` tại `${WORKSPACE_ROOT:-/workspaces}`) + env `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET`/`GITHUB_OAUTH_CALLBACK`/`WORKSPACE_ROOT`/`TOKEN_ENCRYPTION_KEY` cho service `gateway` trong `docker-compose.yml`
-- [ ] T003 [P] Cập nhật `.gitignore` + `.dockerignore` để chắc chắn không có `workspaces/` lọt vào repo/build context (volume là external)
-- [ ] T004 [P] Tạo `.env.example` (hoặc cập nhật) liệt kê các biến `GITHUB_*`, `WORKSPACE_ROOT`, `TOKEN_ENCRYPTION_KEY` (giá trị placeholder; secret thật chỉ ở deployment)
-- [ ] T005 Cấu hình `pytest` cho gateway (`backend/gateway/pyproject.toml` `[tool.pytest.ini_options]` với `asyncio_mode = "auto"`) + tạo `backend/gateway/tests/__init__.py` và `backend/gateway/tests/conftest.py` khung (tmp `WORKSPACE_ROOT`, fixture engine SQLite/`asyncpg` test)
+- [X] T001 Thêm runtime deps vào `backend/gateway/pyproject.toml`: `sqlalchemy[asyncio]>=2.0`, `asyncpg`, `alembic`, `cryptography`; và dev deps `pytest`, `pytest-asyncio`, `respx` (theo research.md "Dependencies thêm")
+- [X] T002 [P] Thêm named volume `workspaces` (mount rw vào service `gateway` và `agent` tại `${WORKSPACE_ROOT:-/workspaces}`) + env `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET`/`GITHUB_OAUTH_CALLBACK`/`WORKSPACE_ROOT`/`TOKEN_ENCRYPTION_KEY` cho service `gateway` trong `docker-compose.yml`
+- [X] T003 [P] Cập nhật `.gitignore` + `.dockerignore` để chắc chắn không có `workspaces/` lọt vào repo/build context (volume là external)
+- [X] T004 [P] Tạo `.env.example` (hoặc cập nhật) liệt kê các biến `GITHUB_*`, `WORKSPACE_ROOT`, `TOKEN_ENCRYPTION_KEY` (giá trị placeholder; secret thật chỉ ở deployment)
+- [X] T005 Cấu hình `pytest` cho gateway (`backend/gateway/pyproject.toml` `[tool.pytest.ini_options]` với `asyncio_mode = "auto"`) + tạo `backend/gateway/tests/__init__.py` và `backend/gateway/tests/conftest.py` khung (tmp `WORKSPACE_ROOT`, fixture engine SQLite/`asyncpg` test)
 
 **Checkpoint**: deps + compose + test harness sẵn sàng.
 
@@ -48,43 +48,43 @@ description: "Task list for Workspace Provisioning + GitHub OAuth"
 
 ### Tests (red trước)
 
-- [ ] T006 [P] Test `pathsafe`: chặn `../`, đường dẫn tuyệt đối ngoài root, symlink trỏ ra ngoài; chấp nhận đường dẫn hợp lệ trong root — `backend/gateway/tests/test_pathsafe.py` (SC-004)
-- [ ] T007 [P] Test `crypto`: encrypt→decrypt roundtrip, ciphertext ≠ plaintext, key sai → fail — `backend/gateway/tests/test_crypto.py` (FR-002)
+- [X] T006 [P] Test `pathsafe`: chặn `../`, đường dẫn tuyệt đối ngoài root, symlink trỏ ra ngoài; chấp nhận đường dẫn hợp lệ trong root — `backend/gateway/tests/test_pathsafe.py` (SC-004)
+- [X] T007 [P] Test `crypto`: encrypt→decrypt roundtrip, ciphertext ≠ plaintext, key sai → fail — `backend/gateway/tests/test_crypto.py` (FR-002)
 
 ### Implementation
 
-- [ ] T008 [P] `config.py`: pydantic `Settings` đọc env `GITHUB_CLIENT_ID/SECRET/OAUTH_CALLBACK`, `WORKSPACE_ROOT`, `TOKEN_ENCRYPTION_KEY`, `DATABASE_URL`, `REDIS_URL` — `backend/gateway/src/specdeck_gateway/config.py`
-- [ ] T009 [P] `crypto.py`: Fernet encrypt/decrypt token từ `TOKEN_ENCRYPTION_KEY` — `backend/gateway/src/specdeck_gateway/crypto.py` (làm T007 xanh)
-- [ ] T010 [P] `pathsafe.py`: `resolve_in_root(root, candidate)` + `assert_within_root` (resolve→`is_relative_to`) — `backend/gateway/src/specdeck_gateway/pathsafe.py` (làm T006 xanh)
-- [ ] T011 `db.py`: async engine + `async_sessionmaker` (SQLAlchemy 2.0 + asyncpg), `Base` declarative, dependency `get_session` — `backend/gateway/src/specdeck_gateway/db.py`
-- [ ] T012 `models_db.py`: ORM **3 bảng** `Project` (gộp workspace: `rel_path` unique, `source`/`remote_url`/`base_branch`/`workspace_status`, `active_job_id` FK nullable), `GitConnection` (`provider` unique, `token_ciphertext` bytea), `ProvisioningJob` (uuid PK, `project_id` FK, `kind`/`status`/`phase`/`progress`/`message`) + enums theo data-model.md — `backend/gateway/src/specdeck_gateway/models_db.py` (depends T011)
-- [ ] T013 Khởi tạo Alembic (`alembic.ini` + `migrations/env.py` async) + migration tạo **3 bảng** + enums; xử lý **circular FK** `project.active_job_id ↔ provisioning_job.project_id` (tạo bảng trước, `ALTER TABLE … ADD CONSTRAINT` sau / deferrable); tạo **partial unique index** `one_active_job_per_project ON provisioning_job(project_id) WHERE status='running'` — `backend/gateway/src/specdeck_gateway/migrations/` (depends T012)
-- [ ] T014 Test reconcile-on-startup (red→green): job `running`/workspace `provisioning` lúc khởi động → `error`/`broken`, không kẹt — `backend/gateway/tests/test_reconcile.py` (SC-006, FR-019)
-- [ ] T015 `main.py` lifespan: chạy `alembic upgrade head` (hoặc verify) + reconcile job dở khi startup + include routers (stub) — `backend/gateway/src/specdeck_gateway/main.py` (depends T012, T014)
+- [X] T008 [P] `config.py`: pydantic `Settings` đọc env `GITHUB_CLIENT_ID/SECRET/OAUTH_CALLBACK`, `WORKSPACE_ROOT`, `TOKEN_ENCRYPTION_KEY`, `DATABASE_URL`, `REDIS_URL` — `backend/gateway/src/specdeck_gateway/config.py`
+- [X] T009 [P] `crypto.py`: Fernet encrypt/decrypt token từ `TOKEN_ENCRYPTION_KEY` — `backend/gateway/src/specdeck_gateway/crypto.py` (làm T007 xanh)
+- [X] T010 [P] `pathsafe.py`: `resolve_in_root(root, candidate)` + `assert_within_root` (resolve→`is_relative_to`) — `backend/gateway/src/specdeck_gateway/pathsafe.py` (làm T006 xanh)
+- [X] T011 `db.py`: async engine + `async_sessionmaker` (SQLAlchemy 2.0 + asyncpg), `Base` declarative, dependency `get_session` — `backend/gateway/src/specdeck_gateway/db.py`
+- [X] T012 `models_db.py`: ORM **3 bảng** `Project` (gộp workspace: `rel_path` unique, `source`/`remote_url`/`base_branch`/`workspace_status`, `active_job_id` FK nullable), `GitConnection` (`provider` unique, `token_ciphertext` bytea), `ProvisioningJob` (uuid PK, `project_id` FK, `kind`/`status`/`phase`/`progress`/`message`) + enums theo data-model.md — `backend/gateway/src/specdeck_gateway/models_db.py` (depends T011)
+- [X] T013 Khởi tạo Alembic (`alembic.ini` + `migrations/env.py` async) + migration tạo **3 bảng** + enums; xử lý **circular FK** `project.active_job_id ↔ provisioning_job.project_id` (tạo bảng trước, `ALTER TABLE … ADD CONSTRAINT` sau / deferrable); tạo **partial unique index** `one_active_job_per_project ON provisioning_job(project_id) WHERE status='running'` — `backend/gateway/src/specdeck_gateway/migrations/` (depends T012)
+- [X] T014 Test reconcile-on-startup (red→green): job `running`/workspace `provisioning` lúc khởi động → `error`/`broken`, không kẹt — `backend/gateway/tests/test_reconcile.py` (SC-006, FR-019)
+- [X] T015 `main.py` lifespan: chạy `alembic upgrade head` (hoặc verify) + reconcile job dở khi startup + include routers (stub) — `backend/gateway/src/specdeck_gateway/main.py` (depends T012, T014)
 
 **Checkpoint**: Foundation sẵn sàng — các US có thể bắt đầu song song.
 
 ---
 
-## Phase 3: User Story 1 - Connect GitHub qua OAuth (Priority: P1) 🎯 MVP
+## Phase 3: User Story 1 - Connect GitHub qua Device Flow (Priority: P1) 🎯 MVP
 
-**Goal**: Authorize GitHub một lần (OAuth web flow), token mã hoá server-only, list được repo (kể cả private).
+**Goal**: Kết nối GitHub một lần (OAuth Device Flow, như `gh login` — không secret/callback), token mã hoá server-only, list được repo (kể cả private).
 
-**Independent Test**: "Connect GitHub" → authorize → "Connected as <login>" + list repo; DevTools Network/bundle **không** chứa access token.
+**Independent Test**: "Connect GitHub" → nhập user_code trên github.com/login/device → "Connected as <login>" + list repo; DevTools Network/bundle **không** chứa access token (và device_code).
 
 ### Tests (red trước)
 
-- [ ] T016 [P] [US1] Test OAuth callback dùng `respx` mock GitHub (exchange code→token, lưu mã hoá, verify state); deny/state sai → không tạo bản ghi token — `backend/gateway/tests/test_github_oauth.py` (FR-001/FR-002, US1.3)
-- [ ] T017 [P] [US1] Test `/api/github/status` + `/api/github/repos` không bao giờ chứa token trong response; repos trả tên/owner/private/default_branch; token 401 → `github_reauth_required` — `backend/gateway/tests/test_github_router.py` (SC-001, FR-004/FR-005)
+- [X] T016 [P] [US1] Test Device Flow dùng `respx` mock GitHub (device/start trả user_code+verification_uri; poll pending→success lưu token mã hoá; device_code KHÔNG xuống client); denied/expired → không tạo bản ghi token — `backend/gateway/tests/test_github_oauth.py` (FR-001/FR-002, US1.3)
+- [X] T017 [P] [US1] Test `/api/integrations/github/status` + `/repos` không bao giờ chứa token trong response; repos trả tên/owner/private/default_branch; token 401 → `github_reauth_required` — `backend/gateway/tests/test_github_router.py` (SC-001, FR-004/FR-005)
 
 ### Implementation
 
-- [ ] T018 [US1] `github_oauth.py`: build authorize URL (`scope=repo read:user` + `state` CSRF), exchange `code`→token, fetch `github_login`, list repos (httpx, token decrypt server-side) — `backend/gateway/src/specdeck_gateway/github_oauth.py` (depends T009; làm T016 xanh)
-- [ ] T019 [US1] `routers/github.py`: `GET /api/github/connect` (302), `GET /api/github/callback`, `GET /api/github/status`, `DELETE /api/github/connection`, `GET /api/github/repos` theo contracts/workspace-api.md — `backend/gateway/src/specdeck_gateway/routers/github.py` (depends T018; làm T017 xanh)
-- [ ] T020 [US1] Include `github` router trong `main.py` + state-store CSRF (in-memory/Redis ngắn hạn) — `backend/gateway/src/specdeck_gateway/main.py`
-- [ ] T021 [P] [US1] Web API client GitHub (`connect`/`status`/`repos`/`disconnect`) gọi `/api/github/*` — `web/src/lib/api/github.ts`
-- [ ] T022 [US1] Web "Connect GitHub" + trạng thái connected/reauth + repo picker (search) trong bước Connect code — `web/src/components/workspace/new-project-dialog.tsx` + component con nếu cần
-- [ ] T023 [P] [US1] Vitest cho GitHub API client (mock fetch: status connected, repos shape, reauth 401) — `web/src/lib/api/__tests__/github.test.ts`
+- [X] T018 [US1] `github_oauth.py`: `start_device_flow()` (POST /login/device/code, `scope=repo read:user`), `poll_device_token(device_code)` (grant device_code), `fetch_user`, `list_repos` (httpx, token decrypt server-side) — `backend/gateway/src/specdeck_gateway/github_oauth.py` (depends T009; làm T016 xanh)
+- [X] T019 [US1] `routers/github.py`: `POST /device/start`, `POST /device/poll`, `GET /status`, `DELETE /connection`, `GET /repos` dưới prefix `/api/integrations/github` theo contracts/workspace-api.md — `backend/gateway/src/specdeck_gateway/routers/github.py` (depends T018; làm T017 xanh)
+- [X] T020 [US1] Aggregate router trong `routers/__init__.py` (`api_router`) + include vào `main.py`; pending device-flow store (in-memory) — `backend/gateway/src/specdeck_gateway/routers/__init__.py`, `main.py`
+- [X] T021 [P] [US1] Web API client GitHub (`startDevice`/`pollDevice`/`status`/`repos`/`disconnect`) gọi `/api/integrations/github/*` — `web/src/lib/api/github.ts`
+- [X] T022 [US1] Web "Connect GitHub" + trạng thái connected/reauth + repo picker (search) trong bước Connect code — `web/src/components/workspace/new-project-dialog.tsx` + `github-source.tsx`
+- [X] T023 [P] [US1] Vitest cho GitHub API client (mock fetch: status connected, repos shape, reauth 401) — `web/src/lib/api/__tests__/github.test.ts`
 
 **Checkpoint**: US1 chạy độc lập — connect + list repo, token không lộ client.
 
@@ -98,20 +98,20 @@ description: "Task list for Workspace Provisioning + GitHub OAuth"
 
 ### Tests (red trước)
 
-- [ ] T024 [P] [US2] Test progress-parser: chuỗi stderr `git clone --progress` mẫu (Counting/Compressing/Receiving/Resolving) → `(phase, progress 0–100)` — `backend/gateway/tests/test_git_progress.py` (FR-011, SC-002)
-- [ ] T025 [P] [US2] Test GIT_ASKPASS: clone (local bare repo làm remote) không ghi token vào `.git/config`/args; folder đích không rỗng → từ chối; clone xong là git repo hợp lệ có HEAD — `backend/gateway/tests/test_git_ops.py` (SC-001/SC-005, FR-013)
-- [ ] T026 [P] [US2] Test provisioning job + Redis publish: job `clone` chuyển `provisioning`→`ready`; fail/cancel → dọn folder dở + `error`/`unlinked` — `backend/gateway/tests/test_provisioning.py` (FR-014, SC-003)
+- [X] T024 [P] [US2] Test progress-parser: chuỗi stderr `git clone --progress` mẫu (Counting/Compressing/Receiving/Resolving) → `(phase, progress 0–100)` — `backend/gateway/tests/test_git_progress.py` (FR-011, SC-002)
+- [X] T025 [P] [US2] Test GIT_ASKPASS: clone (local bare repo làm remote) không ghi token vào `.git/config`/args; folder đích không rỗng → từ chối; clone xong là git repo hợp lệ có HEAD — `backend/gateway/tests/test_git_ops.py` (SC-001/SC-005, FR-013)
+- [X] T026 [P] [US2] Test provisioning job + Redis publish: job `clone` chuyển `provisioning`→`ready`; fail/cancel → dọn folder dở + `error`/`unlinked` — `backend/gateway/tests/test_provisioning.py` (FR-014, SC-003)
 
 ### Implementation
 
-- [ ] T027 [US2] `git_ops.py`: `clone(remote, dest, branch, token)` qua subprocess + GIT_ASKPASS script + parse `--progress` stderr theo dòng/`\r` → callback tiến độ; guard folder không rỗng — `backend/gateway/src/specdeck_gateway/git_ops.py` (depends T010; làm T024/T025 xanh)
-- [ ] T028 [US2] `provisioning.py`: orchestrate job (tạo `provisioning_job` + set `project.active_job_id`, chạy git_ops, publish Redis qua helper `channel_for('ws:provision', job_id)`, cập nhật `project.workspace_status`, dọn dẹp khi fail/cancel); concurrency dựa **partial unique index** (insert job `running` thứ 2 cùng project → IntegrityError → 409). Viết `channel_for` + reconcile sweep **generic** (tái dùng agent-execution) — `backend/gateway/src/specdeck_gateway/provisioning.py` (depends T027, T012; làm T026 xanh)
-- [ ] T029 [US2] `routers/workspace.py`: `POST /api/projects/{id}/workspace` mode `clone` (202 + job_id; 409 `target_not_empty`; 401 `github_reauth_required`) + `GET …/workspace` + `POST …/cancel` theo contracts — `backend/gateway/src/specdeck_gateway/routers/workspace.py` (depends T028)
-- [ ] T030 [US2] SSE `GET /api/projects/{id}/workspace/events` (sse-starlette): snapshot từ Postgres (`project.active_job_id`→job) → relay Redis + heartbeat ~15s, đóng stream khi done/error theo contracts/provisioning-events.md. Tách hàm relay **generic** (`snapshot_loader` thay được) để agent-execution tái dùng — `backend/gateway/src/specdeck_gateway/routers/workspace.py` (depends T028)
-- [ ] T031 [US2] Include `workspace` router trong `main.py` — `backend/gateway/src/specdeck_gateway/main.py`
-- [ ] T032 [P] [US2] Web workspace API client (`createWorkspace`/`getWorkspace`/`cancel`) + SSE hook `useProvisioningEvents` (EventSource: snapshot+progress+done+error, auto-reconnect) — `web/src/lib/api/workspace.ts`
-- [ ] T033 [US2] Web nhánh "Clone repo" trong Connect code: chọn repo+base branch → POST → thanh tiến độ realtime → `ready` — `web/src/components/workspace/new-project-dialog.tsx`
-- [ ] T034 [P] [US2] Vitest cho SSE hook (mock EventSource: snapshot→progress→done; reconnect) — `web/src/lib/api/__tests__/workspace.test.ts`
+- [X] T027 [US2] `git_ops.py`: `clone(remote, dest, branch, token)` qua subprocess + GIT_ASKPASS script + parse `--progress` stderr theo dòng/`\r` → callback tiến độ; guard folder không rỗng — `backend/gateway/src/specdeck_gateway/git_ops.py` (depends T010; làm T024/T025 xanh)
+- [X] T028 [US2] `provisioning.py`: orchestrate job (tạo `provisioning_job` + set `project.active_job_id`, chạy git_ops, publish Redis qua helper `channel_for('ws:provision', job_id)`, cập nhật `project.workspace_status`, dọn dẹp khi fail/cancel); concurrency dựa **partial unique index** (insert job `running` thứ 2 cùng project → IntegrityError → 409). Viết `channel_for` + reconcile sweep **generic** (tái dùng agent-execution) — `backend/gateway/src/specdeck_gateway/provisioning.py` (depends T027, T012; làm T026 xanh)
+- [X] T029 [US2] `routers/workspace.py`: `POST /api/projects/{id}/workspace` mode `clone` (202 + job_id; 409 `target_not_empty`; 401 `github_reauth_required`) + `GET …/workspace` + `POST …/cancel` theo contracts — `backend/gateway/src/specdeck_gateway/routers/workspace.py` (depends T028)
+- [X] T030 [US2] SSE `GET /api/projects/{id}/workspace/events` (sse-starlette): snapshot từ Postgres (`project.active_job_id`→job) → relay Redis + heartbeat ~15s, đóng stream khi done/error theo contracts/provisioning-events.md. Tách hàm relay **generic** (`snapshot_loader` thay được) để agent-execution tái dùng — `backend/gateway/src/specdeck_gateway/routers/workspace.py` (depends T028)
+- [X] T031 [US2] Include `workspace` router trong `main.py` — `backend/gateway/src/specdeck_gateway/main.py`
+- [X] T032 [P] [US2] Web workspace API client (`createWorkspace`/`getWorkspace`/`cancel`) + SSE hook `useProvisioningEvents` (EventSource: snapshot+progress+done+error, auto-reconnect) — `web/src/lib/api/workspace.ts`
+- [X] T033 [US2] Web nhánh "Clone repo" trong Connect code: chọn repo+base branch → POST → thanh tiến độ realtime → `ready` — `web/src/components/workspace/new-project-dialog.tsx` + `clone-progress.tsx`
+- [X] T034 [P] [US2] Vitest cho SSE hook (mock EventSource: snapshot→progress→done; reconnect) — `web/src/lib/api/__tests__/workspace.test.ts`
 
 **Checkpoint**: US1+US2 = MVP "đưa code thật lên deck".
 
@@ -145,15 +145,15 @@ description: "Task list for Workspace Provisioning + GitHub OAuth"
 
 ### Tests (red trước)
 
-- [ ] T039 [P] [US4] Test browse: chỉ liệt kê thư mục con trực tiếp trong root, `is_git`/`remote_url` đúng; `path` thoát root → `400 path_outside_root` — `backend/gateway/tests/test_browse.py` (FR-008, SC-004)
-- [ ] T040 [P] [US4] Test link: git có remote → đọc `git remote` prefill + `ready`; non-git → init + `ready`; folder đã link cho Project khác → `409 folder_already_linked` — `backend/gateway/tests/test_link.py` (FR-012/FR-015)
+- [X] T039 [P] [US4] Test browse: chỉ liệt kê thư mục con trực tiếp trong root, `is_git`/`remote_url` đúng; `path` thoát root → `400 path_outside_root` — `backend/gateway/tests/test_browse.py` (FR-008, SC-004)
+- [X] T040 [P] [US4] Test link: git có remote → đọc `git remote` prefill + `ready`; non-git → init + `ready`; folder đã link cho Project khác → `409 folder_already_linked` — `backend/gateway/tests/test_link.py` (FR-012/FR-015)
 
 ### Implementation
 
-- [ ] T041 [US4] `git_ops.detect_remote(path)` (đọc `git remote get-url origin`) + helper kiểm tra is-git — `backend/gateway/src/specdeck_gateway/git_ops.py`
-- [ ] T042 [US4] `GET /api/workspaces/browse` (path-safe, liệt kê dir + is_git + remote_url) — `backend/gateway/src/specdeck_gateway/routers/workspace.py` (depends T010; làm T039 xanh)
-- [ ] T043 [US4] Nhánh `mode: link` trong `provisioning.py`/`routers/workspace.py`: auto-detect remote hoặc init; chặn collision qua unique `rel_path` → 409 — (depends T041; làm T040 xanh)
-- [ ] T044 [US4] Web folder picker (browse managed root) + nhánh "Link existing folder" với prefill remote — `web/src/components/workspace/new-project-dialog.tsx`
+- [X] T041 [US4] `git_ops.detect_remote(path)` (đọc `git remote get-url origin`) + `is_git_repo`/`detect_branch`/`git_init` helpers — `backend/gateway/src/specdeck_gateway/git_ops.py`
+- [X] T042 [US4] `GET /api/workspaces/browse` (path-safe, liệt kê dir + is_git + remote_url) — `backend/gateway/src/specdeck_gateway/routers/workspace.py` (depends T010; làm T039 xanh)
+- [X] T043 [US4] Nhánh `mode: link` trong `provisioning.py` (`link_existing`) + `routers/workspace.py`: auto-detect remote hoặc init; **đồng bộ** (không streaming) → `200`; chặn collision qua unique `rel_path` → `409 folder_already_linked` — (depends T041; làm T040 xanh)
+- [X] T044 [US4] Web folder picker (browse managed root) + nhánh "Existing folder" trong trang `/new` với prefill remote — `web/src/components/workspace/folder-source.tsx`, `web/src/lib/api/workspaces.ts`, `web/src/app/(workspace)/new/page.tsx` (thay cho dialog cũ đã xoá)
 
 **Checkpoint**: uc3+uc4 (link/auto-detect) hoạt động, path-safe.
 

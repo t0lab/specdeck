@@ -2,11 +2,11 @@
 
 Phase 0 — chốt các quyết định kỹ thuật. Mỗi mục: **Decision / Rationale / Alternatives**.
 
-## R1 — GitHub auth: OAuth App (user-to-server)
+## R1 — GitHub auth: OAuth App **Device Flow** (user-to-server)
 
-- **Decision**: OAuth App web flow. Gateway redirect tới `https://github.com/login/oauth/authorize?client_id=…&scope=repo%20read:user&state=<csrf>`; callback `/api/github/callback` đổi `code` lấy token tại `https://github.com/login/oauth/access_token`. Scope `repo` (clone private) + `read:user` (lấy login). Token mặc định **không hết hạn** (OAuth App thường), không dùng refresh-token trong v1.
-- **Rationale**: Web flow cho UX "list repo của tôi" + clone private mà không bắt dán PAT. Self-host 1 user → không cần GitHub App installation phức tạp. `state` chống CSRF.
-- **Alternatives**: *GitHub App* (fine-grained, installation token) — mạnh hơn nhưng setup nặng, thừa cho 1 user. *PAT paste* — đơn giản nhưng UX thô, scope rộng tay user. *Expiring OAuth tokens (8h + refresh)* — defer; thêm phức tạp refresh, không cần cho self-host.
+- **Decision**: OAuth **Device Authorization Flow** (như `gh login`). `POST https://github.com/login/device/code` (client_id + `scope=repo read:user`) → `user_code` + `verification_uri` + `device_code`; user nhập `user_code` tại `github.com/login/device`; gateway poll `POST https://github.com/login/oauth/access_token` (`grant_type=urn:ietf:params:oauth:grant-type:device_code`) lấy token. Scope `repo` (clone private) + `read:user` (login). Token OAuth App mặc định **không hết hạn**, không refresh trong v1.
+- **Rationale**: Device Flow bỏ được **client secret** và **callback URL** (không ghép cứng với hostname tunnel) — đúng pain point self-host. `client_id` không bí mật (nằm công khai trong binary `gh`), nên SpecDeck **ship một `DEFAULT_GITHUB_CLIENT_ID`** (OAuth App của dự án, bật Device Flow) → self-hoster zero-config; override bằng env `GITHUB_CLIENT_ID`. device_code giữ server-side; chỉ user_code/verification_uri xuống client. Không cần `state`/CSRF vì không có redirect callback.
+- **Alternatives**: *Web (Authorization Code) flow* — cần secret + callback khớp tunnel (phiền cho self-host); rejected. *PAT paste* — đơn giản nhưng UX thô, token sống lâu, scope rộng tay user. *Đọc `gh auth token`* — phụ thuộc gh cài+login trên host + mount config vào container, kém portable. *GitHub App* — setup nặng, thừa cho 1 user.
 
 ## R2 — Clone private không lộ token vào đĩa/args/reflog
 
@@ -60,5 +60,5 @@ Phase 0 — chốt các quyết định kỹ thuật. Mỗi mục: **Decision / 
 ## Dependencies thêm (đưa vào tasks)
 
 - gateway pyproject: `sqlalchemy[asyncio]`, `asyncpg`, `alembic`, `cryptography`, `pytest`, `pytest-asyncio`, `respx` (mock httpx GitHub).
-- compose: named volume `workspaces` (rw cho gateway+agent); env `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_OAUTH_CALLBACK`, `WORKSPACE_ROOT`, `TOKEN_ENCRYPTION_KEY`.
+- compose: named volume `workspaces` (rw cho gateway+agent); env `WORKSPACE_ROOT`, `TOKEN_ENCRYPTION_KEY`, và **tuỳ chọn** `GITHUB_CLIENT_ID` (override default ship sẵn). Device Flow → **không** cần `GITHUB_CLIENT_SECRET`/`GITHUB_OAUTH_CALLBACK`.
 - web: API client + `EventSource` SSE hook (không thêm dep nặng).

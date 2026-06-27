@@ -6,7 +6,7 @@
 
 ## Summary
 
-Biến `repo` (chuỗi mock của Project ở 003) thành một **Workspace** thật: một git repo nằm trên một Docker named volume `workspaces`, sẵn-sàng cho `git worktree`. **Gateway (FastAPI) sở hữu provisioning**: chạy OAuth web flow với GitHub, lưu token mã hoá ở Postgres (server-only), và thực thi `git clone`/`git init` như subprocess — stream tiến độ qua Redis pub/sub → SSE xuống Next.js. Agent Server mount **cùng** volume `workspaces` (rw) để sau này tách worktree (ngoài phạm vi 004). Web wire bước "Connect code" trong NewProjectDialog + khối Workspace ở Project Settings vào API thật.
+Biến `repo` (chuỗi mock của Project ở 003) thành một **Workspace** thật: một git repo nằm trên một Docker named volume `workspaces`, sẵn-sàng cho `git worktree`. **Gateway (FastAPI) sở hữu provisioning**: chạy GitHub **OAuth Device Flow** (như `gh login` — không secret/callback), lưu token mã hoá ở Postgres (server-only), và thực thi `git clone`/`git init` như subprocess — stream tiến độ qua Redis pub/sub → SSE xuống Next.js. Agent Server mount **cùng** volume `workspaces` (rw) để sau này tách worktree (ngoài phạm vi 004). Web wire bước "Connect code" trong NewProjectDialog + khối Workspace ở Project Settings vào API thật.
 
 ## Technical Context
 
@@ -66,15 +66,18 @@ backend/
 │   ├── main.py                  # mở rộng: include routers, startup reconcile + DB init
 │   ├── db.py                    # async engine/session (SQLAlchemy 2.0 + asyncpg)
 │   ├── config.py                # settings (env): GITHUB_*, WORKSPACE_ROOT, TOKEN_ENCRYPTION_KEY
-│   ├── models_db.py             # ORM: Project, GitHubConnection, Workspace, ProvisioningJob
-│   ├── crypto.py                # Fernet encrypt/decrypt token
-│   ├── github_oauth.py          # web flow: authorize redirect, callback, repo list
-│   ├── git_ops.py               # clone/init subprocess + GIT_ASKPASS + progress parse
-│   ├── pathsafe.py              # resolve + assert-within-root
-│   ├── provisioning.py          # job orchestration + Redis publish + reconcile
-│   └── routers/
-│       ├── github.py            # /api/github/*
-│       └── workspace.py         # /api/projects/{id}/workspace*, /api/workspaces/browse
+│   ├── core/                    # utilities bảo mật/biên (không phụ thuộc service)
+│   │   ├── crypto.py            # Fernet encrypt/decrypt token
+│   │   └── pathsafe.py          # resolve + assert-within-root
+│   ├── services/               # business logic
+│   │   ├── github_oauth.py      # device flow: start device code, poll token, repo list
+│   │   ├── git_ops.py           # clone/init subprocess + GIT_ASKPASS + progress parse + repo-root detect
+│   │   ├── provisioning.py      # job orchestration + Redis publish + reconcile + link_existing
+│   │   └── streaming.py         # Redis publisher + SSE relay
+│   ├── models/                  # ORM: Project, GitConnection, ProvisioningJob, enums
+│   ├── routers/
+│   │   ├── github.py            # /api/github/*
+│   │   └── workspace.py         # /api/projects/{id}/workspace*, /api/workspaces/browse
 │   └── migrations/              # Alembic
 └── gateway/tests/               # pytest (unit + integration)
 
@@ -91,7 +94,7 @@ docker-compose.yml               # + named volume `workspaces` mounted rw into g
 ## Phasing (gắn user stories trong spec)
 
 - **Foundational** (chặn mọi US): DB layer + Alembic + bảng; `config.py`; `crypto.py`; `pathsafe.py`; volume `workspaces` + env trong compose; startup reconcile.
-- **US1 (P1)**: `github_oauth.py` + router `/api/github/*` (connect/callback/status/disconnect/repos); web Connect-GitHub + repo picker.
+- **US1 (P1)**: `github_oauth.py` + router `/api/integrations/github/*` (device/start, device/poll, status, disconnect, repos); web Connect-GitHub (device code) + repo picker.
 - **US2 (P1)**: `git_ops.py` clone + GIT_ASKPASS + progress; `provisioning.py` job + Redis; SSE endpoint; web clone progress.
 - **US3 (P2)**: `git init` nhánh trong git_ops/provisioning; web "Start empty".
 - **US4 (P2)**: link + auto-detect remote (`git remote`) + browse endpoint (path-safe); web folder picker trong managed root.

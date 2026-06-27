@@ -34,9 +34,9 @@ docker compose exec -T web sh -lc "pnpm exec vitest run && pnpm exec tsc --noEmi
 ## Scenario US1 — Connect GitHub (SC-001)
 
 1. UI → "Connect GitHub" → authorize trên GitHub → quay lại thấy "Connected as <login>".
-2. `curl -s $API/api/github/status` → `{ "connected": true, "github_login": "...", "status": "active" }`.
-3. **SC-001 audit**: kiểm tra `/api/github/status` + bundle web + Network tab → **không** có access token. `curl` mọi response không chứa token.
-4. `GET /api/github/repos?query=spec` → list repo (có private).
+2. `curl -s $API/api/integrations/github/status` → `{ "connected": true, "github_login": "...", "status": "active" }`.
+3. **SC-001 audit**: kiểm tra `/api/integrations/github/status` + bundle web + Network tab → **không** có access token. `curl` mọi response không chứa token.
+4. `GET /api/integrations/github/repos?query=spec` → list repo (có private).
 
 ## Scenario US2 — Clone (SC-002, SC-005)
 
