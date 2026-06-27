@@ -50,6 +50,10 @@ services:
       LANGGRAPH_POSTGRES_URI: postgresql://${POSTGRES_USER:-specdeck}:${POSTGRES_PASSWORD:-specdeck}@postgres:5432/${POSTGRES_DB:-specdeck}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      WORKSPACE_ROOT: ${WORKSPACE_ROOT:-/workspaces}
+    volumes:
+      # Same managed root as the gateway — agent reads it for git worktrees (post-004).
+      - workspaces:${WORKSPACE_ROOT:-/workspaces}
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,6 +72,15 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-specdeck}:${POSTGRES_PASSWORD:-specdeck}@postgres:5432/${POSTGRES_DB:-specdeck}
       REDIS_URL: redis://redis:6379/0
       WEB_ORIGIN: ${WEB_PUBLIC_URL:-http://localhost:3000}
+      # Managed root for git workspaces — shared rw with the agent (worktrees later).
+      WORKSPACE_ROOT: ${WORKSPACE_ROOT:-/workspaces}
+      # GitHub Device Flow uses only a (non-secret) client_id — optional override
+      # of the shipped default. No client secret, no OAuth callback URL.
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      # Token-at-rest encryption — secret lives ONLY here, never in the web client.
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-}
+    volumes:
+      - workspaces:${WORKSPACE_ROOT:-/workspaces}
     depends_on:
       - agent
       - postgres
@@ -95,6 +108,9 @@ services:
 
 volumes:
   pgdata:
+  # Git workspaces (managed root). Lives outside the repo; gateway provisions,
+  # agent consumes (worktrees). Recreate explicitly — never bind-mounted from host.
+  workspaces:
 
 networks:
   specdeck:

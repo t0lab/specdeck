@@ -43,9 +43,14 @@ services:
     volumes:
       - ./backend:/app
       - /app/.venv # keep image's linux virtualenv
+      # Dev visibility: bind-mount the workspace root into the repo (./workspaces,
+      # gitignored) so cloned repos are browsable on the host. Overrides the named
+      # `workspaces` volume at the same target. Production (base file only) keeps it.
+      - ./workspaces:/workspaces
 
   agent:
     # `langgraph dev` already hot-reloads its graphs; just mount live source.
     volumes:
       - ./backend:/app
       - /app/.venv # keep image's linux virtualenv
+      - ./workspaces:/workspaces # see gateway note — same bind mount, shared rw

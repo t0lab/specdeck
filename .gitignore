@@ -16,6 +16,10 @@ __pycache__/
 # ── LangGraph ──
 .langgraph_api/
 
+# ── Workspaces (managed git root — Docker named volume, never tracked) ──
+/workspaces/
+workspaces/
+
 # ── Env / secrets (never commit real values) ──
 .env
 .env.*
